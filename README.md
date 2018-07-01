@@ -1,1 +1,1 @@
-# Projekt na potrzeby wpisu <http://cpp-polska.pl/post/cmake-w-praktyce>
+# Projekt na potrzeby wpisów <http://cpp-polska.pl/tag/sfmlowe%20zabawy>
