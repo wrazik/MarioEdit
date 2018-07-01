@@ -1,1 +1,1 @@
-# Projekt na potrzeby wpisów <http://cpp-polska.pl/tag/sfmlowe%20zabawy>
+# Projekt na potrzeby wpisów z serii [SFML-owe zabawy](http://cpp-polska.pl/tag/sfmlowe%20zabawy)
