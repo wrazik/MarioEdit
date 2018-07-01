@@ -1,0 +1,39 @@
+cmake_minimum_required(VERSION 3.10)
+project(Mario::Edit)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+
+# CLASSES
+file(GLOB_RECURSE CLASSES_SOURCES src/classes/*.cpp)
+add_library(classes ${CLASSES_SOURCES})
+target_include_directories(classes PUBLIC src)
+
+# GAME
+set(SOURCES src/main.cpp)
+add_executable(game ${SOURCES})
+
+target_include_directories(game PUBLIC include)
+target_include_directories(game PUBLIC src)
+
+file(GLOB SFML_LIBS ${CMAKE_SOURCE_DIR}/lib/sfml/*)
+target_link_libraries(game ${SFML_LIBS})
+target_link_libraries(game classes)
+
+# TESTS
+file(GLOB_RECURSE TEST_SOURCES src/tests/*.cpp)
+add_executable(tests ${TEST_SOURCES})
+
+target_include_directories(tests PUBLIC include)
+target_include_directories(tests PUBLIC ${CMAKE_SOURCE_DIR}/src)
+
+file(GLOB GTEST_LIBS ${CMAKE_SOURCE_DIR}/lib/gtest/*)
+target_link_libraries(tests ${SFML_LIBS} ${GTEST_LIBS})
+target_link_libraries(tests classes)
+
+add_custom_target(NAME run_tests COMMAND tests)
