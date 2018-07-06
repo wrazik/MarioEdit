@@ -1,0 +1,71 @@
+#!/bin/bash
+
+function build_gtest()
+{
+    mkdir -p ./build/gtest
+    cd ./build/gtest
+    cmake ../../vendor/gtest
+    make all
+    cd ../../
+}
+
+function build_sfml()
+{
+    mkdir -p ./build/sfml
+    cd ./build/sfml
+    cmake ../../vendor/sfml
+    make all
+    cd ../../
+}
+
+function build_sources()
+{
+    mkdir -p ./build
+    cd ./build
+    cmake ..
+    make tests
+    ../bin/tests
+    if [[ $? -eq 0 ]]; then
+    	make all
+    fi
+    cd ../
+}
+
+function run()
+{
+    build_sources
+    ./bin/game
+}
+
+function test()
+{
+    mkdir -p ./build
+    cd ./build
+    cmake ..
+    make tests
+    ../bin/tests
+}
+
+function build_all()
+{
+    build_gtest
+    build_sfml
+    build_sources
+}
+
+MODE=$1
+if [[ ${MODE} == "build" ]]; then
+    build_all
+elif [[ ${MODE} == "run" ]]; then
+    run
+elif [[ ${MODE} == "test" ]]; then
+    test
+else
+    echo -e "The Mario::Edit CLI \xF0\x9F\x92\xAA"
+    echo -e "Usage: $0 COMMAND"
+    echo -e ""
+    echo -e "List of available commands:"
+    echo "  build     - builds all sources"
+    echo "  run       - runs game"
+    echo "  test      - runs tests"
+fi
