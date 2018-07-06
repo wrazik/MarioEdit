@@ -33,12 +33,18 @@ function build_sources()
 
 function run()
 {
+    build_gtest
+    build_sfml
     build_sources
+
     ./bin/game
 }
 
 function test()
 {
+    build_gtest
+    build_sfml
+
     mkdir -p ./build
     cd ./build
     cmake ..
@@ -53,6 +59,12 @@ function build_all()
     build_sources
 }
 
+function clean()
+{
+    rm bin/game bin/tests bin/lib/libclasses*
+    rm -R build/*
+}
+
 MODE=$1
 if [[ ${MODE} == "build" ]]; then
     build_all
@@ -60,6 +72,8 @@ elif [[ ${MODE} == "run" ]]; then
     run
 elif [[ ${MODE} == "test" ]]; then
     test
+elif [[ ${MODE} == "clean" ]]; then
+    clean
 else
     echo -e "The Mario::Edit CLI \xF0\x9F\x92\xAA"
     echo -e "Usage: $0 COMMAND"
@@ -68,4 +82,5 @@ else
     echo "  build     - builds all sources"
     echo "  run       - runs game"
     echo "  test      - runs tests"
+    echo "  clean     - does cleaning"
 fi
