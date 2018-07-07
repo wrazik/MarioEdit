@@ -18,7 +18,8 @@ target_include_directories(classes PUBLIC src)
 set(SOURCES src/main.cpp)
 add_executable(game ${SOURCES})
 
-include_directories(src vendor/sfml/include)
+target_include_directories(game PUBLIC src)
+target_include_directories(game PUBLIC vendor/sfml/include)
 
 file(GLOB SFML_LIBS ${CMAKE_SOURCE_DIR}/build/sfml/lib/*)
 target_link_libraries(game ${SFML_LIBS})
@@ -28,7 +29,8 @@ target_link_libraries(game classes)
 file(GLOB_RECURSE TEST_SOURCES src/tests/*.cpp)
 add_executable(tests ${TEST_SOURCES})
 
-target_include_directories(tests PUBLIC vendor/gtest/include)
+target_include_directories(tests PUBLIC vendor/sfml/include vendor/gtest/include)
+target_include_directories(tests PUBLIC ${CMAKE_SOURCE_DIR}/src)
 
 file(GLOB GTEST_LIBS ${CMAKE_SOURCE_DIR}/build/gtest/libgtest*)
 target_link_libraries(tests ${SFML_LIBS})
