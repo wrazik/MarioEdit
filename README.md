@@ -2,6 +2,6 @@
 
 # Continuous Integration
 
-Do obsługi CI podpiąłem TravisCi.
+![Build status](https://api.travis-ci.org/CppPolska/MarioEdit.svg?branch=master)
 
-Aktualny status: ![Build status](https://api.travis-ci.org/CppPolska/MarioEdit.svg?branch=master)
+Do obsługi CI podpiąłem TravisCi.
