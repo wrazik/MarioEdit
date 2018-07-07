@@ -18,6 +18,12 @@ function build_sfml()
     cd ../../
 }
 
+function build_vendor()
+{
+    build_gtest
+    build_sfml
+}
+
 function build_sources()
 {
     mkdir -p ./build
@@ -33,8 +39,7 @@ function build_sources()
 
 function run()
 {
-    build_gtest
-    build_sfml
+    build_vendor
     build_sources
 
     ./bin/game
@@ -42,8 +47,7 @@ function run()
 
 function test()
 {
-    build_gtest
-    build_sfml
+    build_vendor
 
     mkdir -p ./build
     cd ./build
@@ -54,8 +58,7 @@ function test()
 
 function build_all()
 {
-    build_gtest
-    build_sfml
+    build_vendor
     build_sources
 }
 
