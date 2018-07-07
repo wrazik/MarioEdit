@@ -1,7 +1,7 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
 #include <functional>
-#include "SFML/Graphics.hpp"
 
 class Tile
 {

@@ -18,8 +18,8 @@ target_include_directories(classes PUBLIC src)
 set(SOURCES src/main.cpp)
 add_executable(game ${SOURCES})
 
-target_include_directories(game PUBLIC include)
 target_include_directories(game PUBLIC src)
+target_include_directories(tests PUBLIC vendor/sfml/include)
 
 file(GLOB SFML_LIBS ${CMAKE_SOURCE_DIR}/build/sfml/lib/*)
 target_link_libraries(game ${SFML_LIBS})
