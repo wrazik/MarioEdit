@@ -4,7 +4,7 @@ language: cpp
 compiler: gcc
 
 before_script:
-  - sudo apt-get install -y libsndfile1-dev x11-common libxrandr-dev libudev-dev libopenal-dev
+  - sudo apt-get install -y libsndfile1-dev libxrandr-dev libudev-dev libopenal-dev
 
 script:
   - ./console build
