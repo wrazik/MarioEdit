@@ -4,7 +4,7 @@ language: cpp
 compiler: gcc
 
 before_script:
-  - sudo apt-get install -y libsndfile1-dev libglew1.5 libglew1.5-dev libfreetype6 libjpeg-turbo8 libjpeg8 libopenal-data libopenal1  libxrandr2 libxrender1 libsoil1 libx11-dev libx11-6 libxrandr2 x11-common libxrandr-dev libudev-dev libopenal-dev
+  - sudo apt-get install -y libglew1.5 libglew1.5-dev libfreetype6 libjpeg-turbo8 libjpeg8 libopenal-data libopenal1  libxrandr2 libxrender1 libsoil1 libx11-dev libx11-6 libxrandr2 x11-common libxrandr-dev libudev-dev libopenal-dev
 
 script:
   - ./console build
