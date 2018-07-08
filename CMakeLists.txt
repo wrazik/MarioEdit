@@ -32,6 +32,7 @@ add_executable(tests ${TEST_SOURCES})
 
 target_include_directories(tests PUBLIC vendor/sfml/include vendor/gtest/include)
 target_include_directories(tests PUBLIC ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(tests pthread)
 
 file(GLOB GTEST_LIBS ${CMAKE_SOURCE_DIR}/build/gtest/libgtest*)
 target_link_libraries(tests ${SFML_LIBS})
