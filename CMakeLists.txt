@@ -13,6 +13,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 file(GLOB_RECURSE CLASSES_SOURCES src/classes/*.cpp)
 add_library(classes ${CLASSES_SOURCES})
 target_include_directories(classes PUBLIC src)
+target_include_directories(classes PUBLIC vendor/sfml/include)
 
 # GAME
 set(SOURCES src/main.cpp)
