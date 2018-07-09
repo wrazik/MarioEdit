@@ -51,7 +51,7 @@ function build_sources()
     do_tests
 
     if [[ $? -eq 0 ]]; then
-    	make all
+    	make game
     else
         exit $?
     fi
