@@ -5,7 +5,7 @@ CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 function build_gtest()
 {
     mkdir -p ${CURRENT_DIR}/build/gtest
-    cd ./build/gtest
+    cd ${CURRENT_DIR}/build/gtest
     cmake -DBUILD_SHARED_LIBS=ON ../../vendor/gtest
     make all
 }
@@ -13,7 +13,7 @@ function build_gtest()
 function build_sfml()
 {
     mkdir -p ${CURRENT_DIR}/build/sfml
-    cd ./build/sfml
+    cd ${CURRENT_DIR}/build/sfml
     cmake -DBUILD_SHARED_LIBS=ON ../../vendor/sfml
     make all
 }
