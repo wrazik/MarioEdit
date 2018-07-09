@@ -37,14 +37,6 @@ function build_sources()
     cd ../
 }
 
-function run()
-{
-    build_vendor
-    build_sources
-
-    ./bin/game
-}
-
 function test()
 {
     build_vendor
@@ -53,6 +45,11 @@ function test()
     cd ./build
     cmake ..
     make tests
+
+    if [[ ! -f ../bin/tests ]]; then
+        exit -1
+    fi
+
     ../bin/tests
 }
 
@@ -63,7 +60,13 @@ function build_all()
     if [[ ! -f bin/game ]]; then
         exit -1
     fi
-    exit -1
+}
+
+function run()
+{
+    build_all
+
+    ./bin/game
 }
 
 function clean()
