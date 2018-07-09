@@ -51,6 +51,7 @@ function build_sources()
     do_tests
 
     if [[ $? -eq 0 ]]; then
+        cd ${CURRENT_DIR}/build
     	make game
     else
         exit $?
