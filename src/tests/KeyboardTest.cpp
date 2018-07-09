@@ -4,7 +4,7 @@
 
 TEST(KeyboardTest, test_not_pressed) {
     Keyboard keyboard;
-    ASSERT_FALSE(keyboard.isPressed(sf::Keyboard::Key::Space));
+    ASSERT_TRUE(keyboard.isPressed(sf::Keyboard::Key::Space));
 }
 
 TEST(KeyboardTest, test_pressed) {
