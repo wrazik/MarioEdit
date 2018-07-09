@@ -50,8 +50,8 @@ function build_sources()
 {
     do_tests
 
-    cd ${CURRENT_DIR}/build
     if [[ $? -eq 0 ]]; then
+        cd ${CURRENT_DIR}/build
     	make all
     else
         exit $?
