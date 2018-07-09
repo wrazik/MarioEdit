@@ -79,6 +79,12 @@ function clean()
     rm -R build/*
 }
 
+function rebuild()
+{
+    clean
+    build_all
+}
+
 MODE=$1
 if [[ ${MODE} == "build" ]]; then
     build_all
@@ -88,6 +94,8 @@ elif [[ ${MODE} == "test" ]]; then
     test
 elif [[ ${MODE} == "clean" ]]; then
     clean
+elif [[ ${MODE} == "rebuild" ]]; then
+    rebuild
 else
     echo -e "The Mario::Edit CLI \xF0\x9F\x92\xAA"
     echo -e "Usage: $0 COMMAND"
