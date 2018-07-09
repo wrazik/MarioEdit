@@ -24,20 +24,7 @@ function build_vendor()
     build_sfml
 }
 
-function build_sources()
-{
-    mkdir -p ./build
-    cd ./build
-    cmake ..
-    make tests
-    ../bin/tests
-    if [[ $? -eq 0 ]]; then
-    	make all
-    fi
-    cd ../
-}
-
-function test()
+function build_tests()
 {
     build_vendor
 
@@ -45,12 +32,29 @@ function test()
     cd ./build
     cmake ..
     make tests
+    cd ../
+}
+
+function do_tests()
+{
+    build_tests
 
     if [[ ! -f ../bin/tests ]]; then
         exit -1
     fi
 
-    ../bin/tests
+    ./bin/tests
+}
+
+function build_sources()
+{
+    do_tests
+    cd build
+
+    if [[ $? -eq 0 ]]; then
+    	make all
+    fi
+    cd ../
 }
 
 function build_all()
