@@ -9,6 +9,8 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpthread")
+
 # CLASSES
 file(GLOB_RECURSE CLASSES_SOURCES src/classes/*.cpp)
 add_library(classes ${CLASSES_SOURCES})
@@ -32,7 +34,6 @@ add_executable(tests ${TEST_SOURCES})
 
 target_include_directories(tests PUBLIC vendor/sfml/include vendor/gtest/include)
 target_include_directories(tests PUBLIC ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(tests pthread)
 
 file(GLOB GTEST_LIBS ${CMAKE_SOURCE_DIR}/build/gtest/libgtest*)
 target_link_libraries(tests ${SFML_LIBS})
