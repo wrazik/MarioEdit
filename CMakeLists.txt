@@ -30,7 +30,6 @@ target_include_directories(game PUBLIC ${CMAKE_SOURCE_DIR}/vendor/sfml/include)
 file(GLOB_RECURSE TEST_SOURCES src/tests/*.cpp)
 add_executable(tests ${TEST_SOURCES})
 
-target_link_libraries(tests ${SFML_LIBS})
 target_link_libraries(tests ${GTEST_LIBS})
 target_link_libraries(tests classes)
 target_include_directories(tests PUBLIC vendor/sfml/include vendor/gtest/include)
