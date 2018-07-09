@@ -51,7 +51,6 @@ function build_sources()
     do_tests
 
     if [[ $? -eq 0 ]]; then
-        cd ${CURRENT_DIR}/build
     	make all
     else
         exit $?
@@ -62,7 +61,7 @@ function build_all()
 {
     build_vendor
     build_sources
-    if [[ ! -f bin/game ]]; then
+    if [[ ! -f ${CURRENT_DIR}/bin/game ]]; then
         exit -1
     fi
 }
