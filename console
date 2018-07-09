@@ -4,7 +4,7 @@ function build_gtest()
 {
     mkdir -p ./build/gtest
     cd ./build/gtest
-    cmake ../../vendor/gtest
+    cmake -DBUILD_SHARED_LIBS=ON ../../vendor/gtest
     make all
     cd ../../
 }
