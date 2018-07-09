@@ -1,21 +1,21 @@
 #!/bin/bash
 
+CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 function build_gtest()
 {
-    mkdir -p ./build/gtest
+    mkdir -p ${CURRENT_DIR}/build/gtest
     cd ./build/gtest
     cmake -DBUILD_SHARED_LIBS=ON ../../vendor/gtest
     make all
-    cd ../../
 }
 
 function build_sfml()
 {
-    mkdir -p ./build/sfml
+    mkdir -p ${CURRENT_DIR}/build/sfml
     cd ./build/sfml
     cmake -DBUILD_SHARED_LIBS=ON ../../vendor/sfml
     make all
-    cd ../../
 }
 
 function build_vendor()
@@ -28,28 +28,29 @@ function build_tests()
 {
     build_vendor
 
-    mkdir -p ./build
-    cd ./build
-    cmake ..
+    mkdir -p ${CURRENT_DIR}/build
+    cd ${CURRENT_DIR}/build
+    cmake ${CURRENT_DIR}
     make tests
-    cd ../
+    cd ${CURRENT_DIR}
 }
 
 function do_tests()
 {
     build_tests
 
-    if [[ ! -f ../bin/tests ]]; then
+    if [[ ! -f ${CURRENT_DIR}/bin/tests ]]; then
         exit -1
     fi
 
-    ./bin/tests
+    ${CURRENT_DIR}/bin/tests
 }
 
 function build_sources()
 {
     do_tests
 
+    cd ${CURRENT_DIR}/build
     if [[ $? -eq 0 ]]; then
     	make all
     else
@@ -70,13 +71,13 @@ function run()
 {
     build_all
 
-    ./bin/game
+    ${CURRENT_DIR}/bin/game
 }
 
 function clean()
 {
-    rm bin/game bin/tests bin/lib/libclasses*
-    rm -R build/*
+    rm ${CURRENT_DIR}/bin/game ${CURRENT_DIR}/bin/tests ${CURRENT_DIR}/bin/lib/libclasses*
+    rm -R ${CURRENT_DIR}/build/*
 }
 
 function rebuild()
@@ -86,6 +87,7 @@ function rebuild()
 }
 
 MODE=$1
+
 if [[ ${MODE} == "build" ]]; then
     build_all
 elif [[ ${MODE} == "run" ]]; then
@@ -101,6 +103,7 @@ else
     echo -e "Usage: $0 COMMAND"
     echo -e ""
     echo -e "List of available commands:"
+    echo "  rebuild   - clean + rebuild"
     echo "  build     - builds all sources"
     echo "  run       - runs game"
     echo "  test      - runs tests"
