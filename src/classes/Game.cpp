@@ -16,7 +16,7 @@ size_t Game::getHeight() {
 
 Game::Game() {
     this->window = std::make_shared<sf::RenderWindow>(
-        sf::VideoMode(Game::width, Game::height), "Mario::Edit", sf::Style::Fullscreen
+        sf::VideoMode(Game::width, Game::height), "Mario::Edit", sf::Style::Default
     );
     this->window->setVerticalSyncEnabled(true);
     this->window->setFramerateLimit(100);
@@ -56,6 +56,7 @@ int Game::run() {
             cursor.unregisterOver(questionMark);
             questionMark.handleEvent(Tile::Event::MouseLeave);
         }
+
         questionMark.draw(this->window);
         cursor.draw();
 
@@ -76,6 +77,9 @@ void Game::handleEvents() {
             } break;
             case sf::Event::KeyReleased: {
                 this->keyboard.release(event.key.code);
+            } break;
+            case sf::Event::Resized: {
+                this->window->setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
             } break;
         }
     }

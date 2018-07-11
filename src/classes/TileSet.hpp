@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 #include <SFML/Graphics.hpp>
 #include "Tile.hpp"
 
