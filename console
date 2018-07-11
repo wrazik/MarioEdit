@@ -70,8 +70,8 @@ function build_all()
 function run()
 {
     build_all
-
-    ${CURRENT_DIR}/bin/game
+    cd ${CURRENT_DIR}
+    ./bin/game
 }
 
 function clean()
