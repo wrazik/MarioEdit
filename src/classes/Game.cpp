@@ -6,30 +6,16 @@
 #include "TileSet.hpp"
 #include "Axis.hpp"
 
-const std::string Game::title = "Mario::Edit";
-
-std::size_t Game::width = 1280;
-
-std::size_t Game::height = 800;
-
-size_t Game::getWidth() {
-    return Game::width;
-}
-
-size_t Game::getHeight() {
-    return Game::height;
-}
-
 Game::Game() {
     this->window = std::make_shared<sf::RenderWindow>(
-        sf::VideoMode(Game::width, Game::height), Game::title, sf::Style::Default
+        sf::VideoMode(this->width, this->height), this->title, sf::Style::Default
     );
     this->window->setVerticalSyncEnabled(true);
     this->window->setFramerateLimit(100);
     this->window->setKeyRepeatEnabled(false);
 
     this->axis.rescale(this->window->getSize());
-    Cursor::setWindow(this->window);
+    Cursor::reinitialize(this->window);
     Tile::setWindow(this->window);
 }
 
@@ -38,7 +24,7 @@ int Game::run() {
 
     TileSet tileset("resources/tiles2.png");
     Tile questionMark = tileset.createTile(0, 5);
-    questionMark.setEventHandler(Tile::Event::MouseOver, [](Tile* tile) {
+    questionMark.setEventHandler(Tile::Event::MouseEnter, [](Tile* tile) {
         tile->highlight();
     });
     questionMark.setEventHandler(Tile::Event::MouseLeave, [](Tile* tile) {
@@ -86,11 +72,12 @@ void Game::handleEvents() {
                 this->keyboard.release(event.key.code);
             } break;
             case sf::Event::Resized: {
-                Game::width = event.size.width;
-                Game::height = event.size.height;
+                this->width = event.size.width;
+                this->height = event.size.height;
 
-                this->axis.rescale({event.size.width, event.size.height});
-                this->window->setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+                sf::Vector2u newSize(this->width, this->height);
+                this->axis.rescale(newSize);
+                this->window->setView(sf::View(sf::FloatRect(0, 0, this->width, this->height)));
             } break;
         }
     }
@@ -101,7 +88,8 @@ void Game::handleEvents() {
 
     if (this->keyboard.isPressed(sf::Keyboard::LAlt) && this->keyboard.isPressed(sf::Keyboard::Enter)) {
         this->fullscreen = !this->fullscreen;
-        this->window->create(sf::VideoMode(Game::width, Game::height), Game::title, this->fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
+        this->window->create(sf::VideoMode(this->width, this->height), this->title, this->fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
         this->axis.rescale(this->window->getSize());
+        Cursor::reinitialize(this->window);
     }
 }

@@ -133,5 +133,5 @@ void Tile::correctCorners() {
 }
 
 void Tile::rescale(float scaleX, float scaleY) {
-    this->sprite.setScale(scaleX, scaleY);
+    this->sprite.setScale(scaleX*scalePromotion, scaleY*scalePromotion);
 }

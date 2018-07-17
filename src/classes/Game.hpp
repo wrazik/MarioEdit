@@ -9,18 +9,15 @@ class Game {
 
 public:
 
-    static std::size_t getWidth();
-    static std::size_t getHeight();
-
     Game();
 
     int run();
 
 private:
 
-    static const std::string title;
-    static std::size_t width;
-    static std::size_t height;
+    const std::string title = "Mario::Edit";
+    std::size_t width = 1280;
+    std::size_t height = 800;
     bool fullscreen = false;
 
     std::shared_ptr<sf::RenderWindow> window;

@@ -9,7 +9,7 @@ class Cursor {
 
 public:
 
-    static void setWindow(std::shared_ptr<sf::RenderWindow>& window);
+    static void reinitialize(std::shared_ptr<sf::RenderWindow> &window);
 
     Cursor();
 

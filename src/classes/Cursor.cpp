@@ -4,7 +4,7 @@
 
 std::shared_ptr<sf::RenderWindow> Cursor::window;
 
-void Cursor::setWindow(std::shared_ptr<sf::RenderWindow> &window) {
+void Cursor::reinitialize(std::shared_ptr<sf::RenderWindow> &window) {
     Cursor::window = window;
     Cursor::window->setMouseCursorVisible(false);
 }
