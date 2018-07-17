@@ -18,7 +18,7 @@ public:
 private:
 
     sf::Vector2u windowSize = {0, 0};
-    const std::size_t blocksOnHeight = 12;
+    const std::size_t blocksOnHeight = 4;
     const std::size_t blockHeight = 16;
     static float scale;
 

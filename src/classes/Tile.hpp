@@ -13,6 +13,9 @@ public:
         MouseOver,
         MouseEnter,
         MouseLeave,
+        StartDrag,
+        Drag,
+        Drop,
     };
 
     static void setWindow(std::shared_ptr<sf::RenderWindow>& window);
@@ -32,6 +35,8 @@ public:
 
     void highlight();
     void undoHighlight();
+    void startDrag();
+    void drop();
 
 private:
 
@@ -41,11 +46,15 @@ private:
     std::size_t id;
     sf::Vector2f highlightReturn;
     float scalePromotion = 1.0f;
+    float scalePromotionBeforeDrag = 1.0f;
 
     sf::Sprite sprite;
     std::function<void(Tile* tile)> mouseOverCallback = nullptr;
     std::function<void(Tile* tile)> mouseEnterCallback = nullptr;
     std::function<void(Tile* tile)> mouseLeaveCallback = nullptr;
+    std::function<void(Tile* tile)> startDragCallback = nullptr;
+    std::function<void(Tile* tile)> dragCallback = nullptr;
+    std::function<void(Tile* tile)> dropCallback = nullptr;
 
     void rescaleCenter();
     void correctCorners();

@@ -57,6 +57,21 @@ void Tile::handleEvent(Tile::Event event) {
                 this->mouseLeaveCallback(this);
             }
         } break;
+        case Tile::Event::StartDrag: {
+            if (this->startDragCallback != nullptr) {
+                this->startDragCallback(this);
+            }
+        } break;
+        case Tile::Event::Drag: {
+            if (this->dragCallback != nullptr) {
+                this->dragCallback(this);
+            }
+        } break;
+        case Tile::Event::Drop: {
+            if (this->dropCallback != nullptr) {
+                this->dropCallback(this);
+            }
+        } break;
     }
 }
 
@@ -71,6 +86,15 @@ void Tile::setEventHandler(Tile::Event event, std::function<void(Tile* tile)> ca
         case Tile::Event::MouseLeave: {
             this->mouseLeaveCallback = callback;
         } break;
+        case Tile::Event::StartDrag: {
+            this->startDragCallback = callback;
+        } break;
+        case Tile::Event::Drag: {
+            this->dragCallback = callback;
+        } break;
+        case Tile::Event::Drop: {
+            this->dropCallback = callback;
+        } break;
     }
 }
 
@@ -84,6 +108,7 @@ void Tile::highlight() {
 
 void Tile::undoHighlight() {
     this->scalePromotion = 1.0f;
+    this->scalePromotionBeforeDrag = 1.0f;
 
     this->rescaleCenter();
     this->sprite.setPosition(this->highlightReturn);
@@ -134,4 +159,15 @@ void Tile::correctCorners() {
 
 void Tile::rescale(float scaleX, float scaleY) {
     this->sprite.setScale(scaleX*scalePromotion, scaleY*scalePromotion);
+}
+
+void Tile::startDrag() {
+    scalePromotionBeforeDrag = scalePromotion;
+    scalePromotion = 1.0f;
+    sprite.setColor(sf::Color(255, 255, 255, 180));
+}
+
+void Tile::drop() {
+    sprite.setColor(sf::Color(255, 255, 255, 255));
+    scalePromotion = scalePromotionBeforeDrag;
 }

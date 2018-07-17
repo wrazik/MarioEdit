@@ -41,22 +41,58 @@ bool Cursor::isOver(Tile &tile) {
 
 void Cursor::registerOver(Tile& tile) {
     if (!this->isOverRegistered(tile)) {
-        this->registeredOverTiles.push_back(tile.getId());
+        this->registeredOverOnTiles.push_back(tile.getId());
     }
 }
 
 void Cursor::unregisterOver(Tile& tile) {
     if (this->isOverRegistered(tile)) {
-        this->registeredOverTiles.erase(
-                std::remove(this->registeredOverTiles.begin(), this->registeredOverTiles.end(), tile.getId()), this->registeredOverTiles.end()
+        this->registeredOverOnTiles.erase(
+                std::remove(this->registeredOverOnTiles.begin(), this->registeredOverOnTiles.end(), tile.getId()), this->registeredOverOnTiles.end()
         );
     }
 }
 
 bool Cursor::isOverRegistered(Tile& tile) {
-    if (this->registeredOverTiles.empty()) {
+    if (this->registeredOverOnTiles.empty()) {
         return false;
     }
 
-    return std::find(this->registeredOverTiles.begin(), this->registeredOverTiles.end(), tile.getId()) != this->registeredOverTiles.end();
+    return std::find(this->registeredOverOnTiles.begin(), this->registeredOverOnTiles.end(), tile.getId()) != this->registeredOverOnTiles.end();
+}
+
+void Cursor::registerDrag(Tile &tile) {
+    if (!this->isDragRegistered(tile)) {
+        this->registeredDragOnTiles.push_back(tile.getId());
+    }
+}
+
+void Cursor::unregisterDrag(Tile &tile) {
+    if (this->isDragRegistered(tile)) {
+        this->registeredDragOnTiles.erase(
+                std::remove(this->registeredDragOnTiles.begin(), this->registeredDragOnTiles.end(), tile.getId()), this->registeredDragOnTiles.end()
+        );
+    }
+}
+
+bool Cursor::isDragRegistered(Tile &tile) {
+    if (this->registeredDragOnTiles.empty()) {
+        return false;
+    }
+
+    return std::find(this->registeredDragOnTiles.begin(), this->registeredDragOnTiles.end(), tile.getId()) != this->registeredDragOnTiles.end();
+}
+
+bool Cursor::isClick() {
+    return this->clickFlag;
+}
+
+void Cursor::click(bool click) {
+    this->clickFlag = click;
+}
+
+void Cursor::handleRegisteredDrags() {
+    for (std::size_t i=0; i<this->registeredDragOnTiles.size(); i++) {
+        this->registeredDragOnTiles[i];
+    }
 }

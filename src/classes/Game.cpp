@@ -20,8 +20,6 @@ Game::Game() {
 }
 
 int Game::run() {
-    Cursor cursor;
-
     TileSet tileset("resources/tiles2.png");
     Tile questionMark = tileset.createTile(0, 5);
     questionMark.setEventHandler(Tile::Event::MouseEnter, [](Tile* tile) {
@@ -29,6 +27,15 @@ int Game::run() {
     });
     questionMark.setEventHandler(Tile::Event::MouseLeave, [](Tile* tile) {
         tile->undoHighlight();
+    });
+    questionMark.setEventHandler(Tile::Event::StartDrag, [](Tile* tile) {
+        tile->startDrag();
+    });
+    questionMark.setEventHandler(Tile::Event::Drag, [](Tile* tile) {
+
+    });
+    questionMark.setEventHandler(Tile::Event::Drop, [](Tile* tile) {
+        tile->drop();
     });
 
     questionMark.setPosition(0, 0);
@@ -43,9 +50,22 @@ int Game::run() {
             questionMark.handleEvent(Tile::Event::MouseEnter);
         } else if (cursor.isOver(questionMark)) {
             questionMark.handleEvent(Tile::Event::MouseOver);
+
+            if (cursor.isClick() && !cursor.isDragRegistered(questionMark)) {
+                cursor.registerDrag(questionMark);
+                questionMark.handleEvent(Tile::Event::StartDrag);
+            } else if (!cursor.isClick() && cursor.isDragRegistered(questionMark)) {
+                cursor.unregisterDrag(questionMark);
+                questionMark.handleEvent(Tile::Event::Drop);
+            }
         } else if (!cursor.isOver(questionMark) && cursor.isOverRegistered(questionMark)) {
             cursor.unregisterOver(questionMark);
             questionMark.handleEvent(Tile::Event::MouseLeave);
+        } else {
+            if (cursor.isDragRegistered(questionMark)) {
+                cursor.unregisterDrag(questionMark);
+                questionMark.handleEvent(Tile::Event::Drop);
+            }
         }
 
         this->window->clear(BG_LIGHT_COLOR);
@@ -78,6 +98,16 @@ void Game::handleEvents() {
                 sf::Vector2u newSize(this->width, this->height);
                 this->axis.rescale(newSize);
                 this->window->setView(sf::View(sf::FloatRect(0, 0, this->width, this->height)));
+            } break;
+            case sf::Event::MouseButtonPressed: {
+                cursor.click(true);
+            } break;
+            case sf::Event::MouseButtonReleased: {
+                cursor.click(false);
+            } break;
+            case sf::Event::MouseMoved: {
+                // Todo
+                cursor.handleRegisteredDrags();
             } break;
         }
     }

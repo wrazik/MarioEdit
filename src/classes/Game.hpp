@@ -4,6 +4,7 @@
 #include <memory>
 #include "Keyboard.hpp"
 #include "Axis.hpp"
+#include "Cursor.hpp"
 
 class Game {
 
@@ -23,6 +24,7 @@ private:
     std::shared_ptr<sf::RenderWindow> window;
 
     Axis axis;
+    Cursor cursor;
     Keyboard keyboard;
 
     void handleEvents();
