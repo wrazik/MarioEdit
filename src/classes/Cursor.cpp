@@ -1,5 +1,7 @@
 #include "Cursor.hpp"
 
+#include <iostream>
+
 std::shared_ptr<sf::RenderWindow> Cursor::window;
 
 void Cursor::setWindow(std::shared_ptr<sf::RenderWindow> &window) {

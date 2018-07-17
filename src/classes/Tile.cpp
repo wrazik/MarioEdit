@@ -75,21 +75,23 @@ void Tile::setEventHandler(Tile::Event event, std::function<void(Tile* tile)> ca
 }
 
 void Tile::highlight() {
-    auto newSpriteScale = this->sprite.getScale()*1.4f;
+    this->scalePromotion = 1.4f;
 
     this->highlightReturn = this->sprite.getPosition();
-    this->rescaleCenter(newSpriteScale);
+    this->rescaleCenter();
     this->correctCorners();
 }
 
 void Tile::undoHighlight() {
-    auto newSpriteScale = this->sprite.getScale()/1.4f;
+    this->scalePromotion = 1.0f;
 
-    this->rescaleCenter(newSpriteScale);
+    this->rescaleCenter();
     this->sprite.setPosition(this->highlightReturn);
 }
 
-void Tile::rescaleCenter(const sf::Vector2<float> &newSpriteScale) {
+void Tile::rescaleCenter() {
+    auto newSpriteScale = sprite.getScale()*scalePromotion;
+
     auto newWidth = sprite.getTextureRect().width * newSpriteScale.x;
     auto newHeight = sprite.getTextureRect().height * newSpriteScale.y;
 
@@ -128,4 +130,8 @@ void Tile::correctCorners() {
     }
 
     this->sprite.setPosition(posX, posY);
+}
+
+void Tile::rescale(float scaleX, float scaleY) {
+    this->sprite.setScale(scaleX, scaleY);
 }

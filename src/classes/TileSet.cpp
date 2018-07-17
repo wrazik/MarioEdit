@@ -1,4 +1,5 @@
 #include "TileSet.hpp"
+#include "Axis.hpp"
 
 TileSet::TileSet(std::string filepath)
 {
@@ -22,7 +23,7 @@ Tile TileSet::createTile(std::size_t x, std::size_t y)
 {
     sf::Sprite sprite;
     sprite.setTexture(*(this->texture));
-    sprite.setScale(this->scale, this->scale);
+    sprite.setScale(Axis::getScale(), Axis::getScale());
 
     sf::IntRect textureRect;
     textureRect.width = this->tileWidth;

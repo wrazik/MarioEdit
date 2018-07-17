@@ -60,6 +60,7 @@ function build_sources()
 
 function build_all()
 {
+    rm ${CURRENT_DIR}/bin/game
     build_vendor
     build_sources
     if [[ ! -f ${CURRENT_DIR}/bin/game ]]; then
@@ -70,8 +71,10 @@ function build_all()
 function run()
 {
     build_all
-    cd ${CURRENT_DIR}
-    ./bin/game
+    if [[ $? -eq 0 ]]; then
+        cd ${CURRENT_DIR}
+        ./bin/game
+    fi
 }
 
 function clean()
