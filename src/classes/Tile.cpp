@@ -101,7 +101,7 @@ void Tile::setEventHandler(Tile::Event event, std::function<void(Tile* tile)> ca
 }
 
 void Tile::highlight() {
-    this->scalePromotion = 1.4f;
+    this->scalePromotion = 1.2f;
 
     this->highlightReturn = this->sprite.getPosition();
     this->rescaleCenter();
@@ -110,7 +110,6 @@ void Tile::highlight() {
 
 void Tile::undoHighlight() {
     this->scalePromotion = 1.0f;
-    this->scalePromotionBeforeDrag = 1.0f;
 
     this->rescaleCenter();
     this->sprite.setPosition(this->highlightReturn);
@@ -164,19 +163,30 @@ void Tile::rescale(float scaleX, float scaleY) {
 }
 
 void Tile::startDrag() {
-    scalePromotionBeforeDrag = scalePromotion;
-    scalePromotion = 1.0f;
     sprite.setColor(sf::Color(255, 255, 255, 180));
+
+    auto cursorPosition = Cursor::getCurrentPosition();
+    dragOffset.x = cursorPosition.x - sprite.getPosition().x;
+    dragOffset.y = cursorPosition.y - sprite.getPosition().y;
     this->drag();
 }
 
 void Tile::drag() {
     auto cursorPosition = Cursor::getCurrentPosition();
-    cursorPosition -= this->getSize()/2;
+    cursorPosition -= this->dragOffset;
     sprite.setPosition(cursorPosition.x, cursorPosition.y);
 }
 
 void Tile::drop() {
     sprite.setColor(sf::Color(255, 255, 255, 255));
-    scalePromotion = scalePromotionBeforeDrag;
+
+    auto spriteStartSizeX = this->getSize().x/scalePromotion;
+    auto spriteStartSizeY = this->getSize().y/scalePromotion;
+
+    auto spriteSizeBorderX = (this->getSize().x-spriteStartSizeX)/2;
+    auto spriteSizeBorderY = (this->getSize().y-spriteStartSizeY)/2;
+
+    auto cursorPosition = Cursor::getCurrentPosition();
+    highlightReturn.x = cursorPosition.x-dragOffset.x+spriteSizeBorderX;
+    highlightReturn.y = cursorPosition.y-dragOffset.y+spriteSizeBorderY;
 }
