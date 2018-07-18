@@ -47,6 +47,8 @@ private:
     std::size_t id;
     sf::Vector2f highlightReturn;
     sf::Vector2i dragOffset = {0, 0};
+    float scaleX = 1.0f;
+    float scaleY = 1.0f;
     float scalePromotion = 1.0f;
 
     sf::Sprite sprite;

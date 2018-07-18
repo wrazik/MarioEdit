@@ -113,18 +113,21 @@ void Tile::undoHighlight() {
 
     this->rescaleCenter();
     this->sprite.setPosition(this->highlightReturn);
+
+    this->correctCorners();
 }
 
 void Tile::rescaleCenter() {
-    auto newSpriteScale = sprite.getScale()*scalePromotion;
+    auto newSpriteScaleX = this->scaleX*scalePromotion;
+    auto newSpriteScaleY = this->scaleY*scalePromotion;
 
-    auto newWidth = sprite.getTextureRect().width * newSpriteScale.x;
-    auto newHeight = sprite.getTextureRect().height * newSpriteScale.y;
+    auto newWidth = sprite.getTextureRect().width * newSpriteScaleX;
+    auto newHeight = sprite.getTextureRect().height * newSpriteScaleY;
 
     auto diffWidth = (newWidth - getSize().x) / 2;
     auto diffHeight = (newHeight - getSize().y) / 2;
 
-    sprite.setScale(newSpriteScale);
+    sprite.setScale(newSpriteScaleX, newSpriteScaleY);
     sprite.setPosition(
         sprite.getPosition().x - diffWidth,
         sprite.getPosition().y - diffHeight
@@ -159,6 +162,8 @@ void Tile::correctCorners() {
 }
 
 void Tile::rescale(float scaleX, float scaleY) {
+    this->scaleX = scaleX;
+    this->scaleY = scaleY;
     this->sprite.setScale(scaleX*scalePromotion, scaleY*scalePromotion);
 }
 
@@ -175,6 +180,8 @@ void Tile::drag() {
     auto cursorPosition = Cursor::getCurrentPosition();
     cursorPosition -= this->dragOffset;
     sprite.setPosition(cursorPosition.x, cursorPosition.y);
+
+    this->correctCorners();
 }
 
 void Tile::drop() {
@@ -189,4 +196,6 @@ void Tile::drop() {
     auto cursorPosition = Cursor::getCurrentPosition();
     highlightReturn.x = cursorPosition.x-dragOffset.x+spriteSizeBorderX;
     highlightReturn.y = cursorPosition.y-dragOffset.y+spriteSizeBorderY;
+
+    this->correctCorners();
 }
