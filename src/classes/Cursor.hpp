@@ -10,22 +10,24 @@ class Cursor {
 public:
 
     static void reinitialize(std::shared_ptr<sf::RenderWindow> &window);
+    static sf::Vector2i getCurrentPosition();
 
     Cursor();
 
+
     void draw();
-    bool isOver(Tile& tile);
+    bool isOver(std::shared_ptr<Tile> tile);
 
     bool isClick();
     void click(bool click);
 
-    void registerOver(Tile& tile);
-    void unregisterOver(Tile& tile);
-    bool isOverRegistered(Tile& tile);
+    void registerOver(std::shared_ptr<Tile> tile);
+    void unregisterOver(std::shared_ptr<Tile> tile);
+    bool isOverRegistered(std::shared_ptr<Tile> tile);
 
-    void registerDrag(Tile& tile);
-    void unregisterDrag(Tile& tile);
-    bool isDragRegistered(Tile& tile);
+    void registerDrag(std::shared_ptr<Tile> tile);
+    void unregisterDrag(std::shared_ptr<Tile> tile);
+    bool isDragRegistered(std::shared_ptr<Tile> tile);
 
     void handleRegisteredDrags();
 
@@ -41,5 +43,4 @@ private:
     bool clickFlag;
 
     void updatePosition();
-
 };

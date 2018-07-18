@@ -36,6 +36,7 @@ public:
     void highlight();
     void undoHighlight();
     void startDrag();
+    void drag();
     void drop();
 
 private:

@@ -1,6 +1,8 @@
 #include "Tile.hpp"
 
 #include <iostream>
+#include "classes/TileRegistry.hpp"
+#include "classes/Cursor.hpp"
 
 std::size_t Tile::nextId = 1;
 
@@ -165,6 +167,13 @@ void Tile::startDrag() {
     scalePromotionBeforeDrag = scalePromotion;
     scalePromotion = 1.0f;
     sprite.setColor(sf::Color(255, 255, 255, 180));
+    this->drag();
+}
+
+void Tile::drag() {
+    auto cursorPosition = Cursor::getCurrentPosition();
+    cursorPosition -= this->getSize()/2;
+    sprite.setPosition(cursorPosition.x, cursorPosition.y);
 }
 
 void Tile::drop() {

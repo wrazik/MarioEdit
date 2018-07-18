@@ -21,56 +21,55 @@ Game::Game() {
 
 int Game::run() {
     TileSet tileset("resources/tiles2.png");
-    Tile questionMark = tileset.createTile(0, 5);
-    questionMark.setEventHandler(Tile::Event::MouseEnter, [](Tile* tile) {
+    auto questionMark = tileset.createTile(0, 5);
+    questionMark->setEventHandler(Tile::Event::MouseEnter, [](Tile* tile) {
         tile->highlight();
     });
-    questionMark.setEventHandler(Tile::Event::MouseLeave, [](Tile* tile) {
+    questionMark->setEventHandler(Tile::Event::MouseLeave, [](Tile* tile) {
         tile->undoHighlight();
     });
-    questionMark.setEventHandler(Tile::Event::StartDrag, [](Tile* tile) {
+    questionMark->setEventHandler(Tile::Event::StartDrag, [](Tile* tile) {
         tile->startDrag();
     });
-    questionMark.setEventHandler(Tile::Event::Drag, [](Tile* tile) {
-
+    questionMark->setEventHandler(Tile::Event::Drag, [](Tile* tile) {
+        tile->drag();
     });
-    questionMark.setEventHandler(Tile::Event::Drop, [](Tile* tile) {
+    questionMark->setEventHandler(Tile::Event::Drop, [](Tile* tile) {
         tile->drop();
     });
 
-    questionMark.setPosition(0, 0);
+    questionMark->setPosition(0, 0);
 
     while (this->window->isOpen()) {
-        questionMark.rescale(Axis::getScale(), Axis::getScale());
-
         this->handleEvents();
 
         if (cursor.isOver(questionMark) && !cursor.isOverRegistered(questionMark)) {
             cursor.registerOver(questionMark);
-            questionMark.handleEvent(Tile::Event::MouseEnter);
+            questionMark->handleEvent(Tile::Event::MouseEnter);
         } else if (cursor.isOver(questionMark)) {
-            questionMark.handleEvent(Tile::Event::MouseOver);
+            questionMark->handleEvent(Tile::Event::MouseOver);
 
             if (cursor.isClick() && !cursor.isDragRegistered(questionMark)) {
                 cursor.registerDrag(questionMark);
-                questionMark.handleEvent(Tile::Event::StartDrag);
+                questionMark->handleEvent(Tile::Event::StartDrag);
             } else if (!cursor.isClick() && cursor.isDragRegistered(questionMark)) {
                 cursor.unregisterDrag(questionMark);
-                questionMark.handleEvent(Tile::Event::Drop);
+                questionMark->handleEvent(Tile::Event::Drop);
             }
         } else if (!cursor.isOver(questionMark) && cursor.isOverRegistered(questionMark)) {
             cursor.unregisterOver(questionMark);
-            questionMark.handleEvent(Tile::Event::MouseLeave);
+            questionMark->handleEvent(Tile::Event::MouseLeave);
         } else {
             if (cursor.isDragRegistered(questionMark)) {
                 cursor.unregisterDrag(questionMark);
-                questionMark.handleEvent(Tile::Event::Drop);
+                questionMark->handleEvent(Tile::Event::Drop);
             }
         }
+        questionMark->rescale(Axis::getScale(), Axis::getScale());
 
         this->window->clear(BG_LIGHT_COLOR);
 
-        questionMark.draw(this->window);
+        questionMark->draw(this->window);
         cursor.draw();
 
         this->window->display();
@@ -106,7 +105,6 @@ void Game::handleEvents() {
                 cursor.click(false);
             } break;
             case sf::Event::MouseMoved: {
-                // Todo
                 cursor.handleRegisteredDrags();
             } break;
         }
