@@ -11,6 +11,7 @@ public:
     static void clear();
     static void registerTile(std::shared_ptr<Tile> tile);
     static std::shared_ptr<Tile> getTile(std::size_t tileId);
+    static std::vector<std::shared_ptr<Tile>> getAll();
 
 private:
 

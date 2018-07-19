@@ -24,3 +24,7 @@ std::shared_ptr<Tile> TileRegistry::getTile(std::size_t tileId) {
         throw e;
     }
 }
+
+std::vector<std::shared_ptr<Tile>> TileRegistry::getAll() {
+    return TileRegistry::allTiles;
+}

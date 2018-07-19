@@ -1,6 +1,5 @@
 #include "Tile.hpp"
 
-#include <iostream>
 #include "classes/TileRegistry.hpp"
 #include "classes/Cursor.hpp"
 
@@ -24,7 +23,8 @@ std::size_t Tile::getId() {
 }
 
 void Tile::setPosition(int posX, int posY) {
-    this->sprite.setPosition(posX, posY);
+    this->position = {(float)posX, (float)posY};
+    this->sprite.setPosition(this->position);
 }
 
 sf::Vector2f Tile::getPosition() {
@@ -101,6 +101,7 @@ void Tile::setEventHandler(Tile::Event event, std::function<void(Tile* tile)> ca
 }
 
 void Tile::highlight() {
+    this->isHighlightedFlag = true;
     this->scalePromotion = 1.2f;
 
     this->highlightReturn = this->sprite.getPosition();
@@ -109,6 +110,7 @@ void Tile::highlight() {
 }
 
 void Tile::undoHighlight() {
+    this->isHighlightedFlag = false;
     this->scalePromotion = 1.0f;
 
     this->rescaleCenter();
@@ -128,10 +130,10 @@ void Tile::rescaleCenter() {
     auto diffHeight = (newHeight - getSize().y) / 2;
 
     sprite.setScale(newSpriteScaleX, newSpriteScaleY);
-    sprite.setPosition(
-        sprite.getPosition().x - diffWidth,
-        sprite.getPosition().y - diffHeight
-    );
+
+    this->position.x = sprite.getPosition().x - diffWidth;
+    this->position.y = sprite.getPosition().y - diffHeight;
+    sprite.setPosition(this->position);
 }
 
 void Tile::correctCorners() {
@@ -158,13 +160,28 @@ void Tile::correctCorners() {
         posY = windowHeight-height;
     }
 
-    this->sprite.setPosition(posX, posY);
+    this->position.x = posX;
+    this->position.y = posY;
+    this->sprite.setPosition(this->position);
+}
+
+void Tile::recalculateHighlightReturn() {
+    auto spriteStartSizeX = getSize().x / scalePromotion;
+    auto spriteStartSizeY = getSize().y / scalePromotion;
+
+    auto spriteSizeBorderX = (getSize().x - spriteStartSizeX) / 2;
+    auto spriteSizeBorderY = (getSize().y - spriteStartSizeY) / 2;
+
+    auto cursorPosition = Cursor::getCurrentPosition();
+    highlightReturn.x = cursorPosition.x - dragOffset.x + spriteSizeBorderX;
+    highlightReturn.y = cursorPosition.y - dragOffset.y + spriteSizeBorderY;
 }
 
 void Tile::rescale(float scaleX, float scaleY) {
     this->scaleX = scaleX;
     this->scaleY = scaleY;
     this->sprite.setScale(scaleX*scalePromotion, scaleY*scalePromotion);
+
 }
 
 void Tile::startDrag() {
@@ -186,16 +203,8 @@ void Tile::drag() {
 
 void Tile::drop() {
     sprite.setColor(sf::Color(255, 255, 255, 255));
-
-    auto spriteStartSizeX = this->getSize().x/scalePromotion;
-    auto spriteStartSizeY = this->getSize().y/scalePromotion;
-
-    auto spriteSizeBorderX = (this->getSize().x-spriteStartSizeX)/2;
-    auto spriteSizeBorderY = (this->getSize().y-spriteStartSizeY)/2;
-
-    auto cursorPosition = Cursor::getCurrentPosition();
-    highlightReturn.x = cursorPosition.x-dragOffset.x+spriteSizeBorderX;
-    highlightReturn.y = cursorPosition.y-dragOffset.y+spriteSizeBorderY;
-
+    this->recalculateHighlightReturn();
     this->correctCorners();
+
+    dragOffset = {0, 0};
 }

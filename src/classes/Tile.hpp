@@ -26,6 +26,7 @@ public:
 
     void setPosition(int posX, int posY);
     sf::Vector2f getPosition();
+
     sf::Vector2i getSize();
 
     void rescale(float scaleX, float scaleY);
@@ -47,6 +48,9 @@ private:
     std::size_t id;
     sf::Vector2f highlightReturn;
     sf::Vector2i dragOffset = {0, 0};
+    sf::Vector2f position;
+
+    bool isHighlightedFlag = false;
     float scaleX = 1.0f;
     float scaleY = 1.0f;
     float scalePromotion = 1.0f;
@@ -61,4 +65,5 @@ private:
 
     void rescaleCenter();
     void correctCorners();
+    void recalculateHighlightReturn();
 };

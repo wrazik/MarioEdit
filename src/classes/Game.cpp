@@ -112,10 +112,11 @@ void Game::handleEvents() {
 
     if (this->keyboard.isPressed(sf::Keyboard::Escape) || this->keyboard.isPressed(sf::Keyboard::Q)) {
         this->window->close();
+        return;
     }
 
-    if (this->keyboard.isPressed(sf::Keyboard::LAlt) && this->keyboard.isPressed(sf::Keyboard::Enter)) {
-        this->fullscreen = !this->fullscreen;
+    if (this->keyboard.isPressed(sf::Keyboard::F) || this->keyboard.isPressed(sf::Keyboard::G)) {
+        this->fullscreen = this->keyboard.isPressed(sf::Keyboard::F);
         this->window->create(sf::VideoMode(this->width, this->height), this->title, this->fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
         this->axis.rescale(this->window->getSize());
         Cursor::reinitialize(this->window);
