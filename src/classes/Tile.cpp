@@ -1,5 +1,6 @@
 #include "Tile.hpp"
 
+#include <iostream>
 #include "classes/TileRegistry.hpp"
 #include "classes/Cursor.hpp"
 
@@ -25,6 +26,10 @@ std::size_t Tile::getId() {
 void Tile::setPosition(int posX, int posY) {
     this->position = {(float)posX, (float)posY};
     this->sprite.setPosition(this->position);
+
+    if (this->isHighlightedFlag) {
+
+    }
 }
 
 sf::Vector2f Tile::getPosition() {
@@ -110,6 +115,7 @@ void Tile::highlight() {
 }
 
 void Tile::undoHighlight() {
+    std::cout << "Back" << std::endl;
     this->isHighlightedFlag = false;
     this->scalePromotion = 1.0f;
 

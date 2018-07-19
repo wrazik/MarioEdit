@@ -96,7 +96,7 @@ if [[ ${MODE} == "build" ]]; then
 elif [[ ${MODE} == "run" ]]; then
     run
 elif [[ ${MODE} == "test" ]]; then
-    test
+    do_tests
 elif [[ ${MODE} == "clean" ]]; then
     clean
 elif [[ ${MODE} == "rebuild" ]]; then

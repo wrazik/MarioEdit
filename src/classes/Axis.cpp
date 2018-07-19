@@ -1,12 +1,14 @@
 #include "Axis.hpp"
 
 #include <vector>
+#include <iostream>
 #include "Tile.hpp"
 #include "TileRegistry.hpp"
 
 float Axis::scale = 0;
 
 void Axis::rescale(sf::Vector2u windowSize) {
+    std::cout << "Rescale" << std::endl;
     this->windowSize = windowSize;
 
     float prevScale = this->scale;
