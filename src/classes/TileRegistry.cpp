@@ -1,7 +1,5 @@
 #include "TileRegistry.hpp"
 
-#include "Exception/TileNotFoundException.hpp"
-
 std::vector<std::shared_ptr<Tile>> TileRegistry::allTiles;
 
 void TileRegistry::clear() {

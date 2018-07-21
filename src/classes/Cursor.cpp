@@ -1,9 +1,6 @@
 #include "Cursor.hpp"
 #include "TileRegistry.hpp"
 
-#include <iostream>
-#include <classes/Exception/TileNotFoundException.hpp>
-
 std::shared_ptr<sf::RenderWindow> Cursor::window;
 
 void Cursor::reinitialize(std::shared_ptr<sf::RenderWindow> &window) {
