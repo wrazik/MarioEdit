@@ -62,6 +62,10 @@ int Game::run() {
                 questionMark->handleEvent(Tile::Event::Drop);
             }
         } else if (!cursor.isOver(questionMark) && cursor.isOverRegistered(questionMark)) {
+            if (cursor.isDragRegistered(questionMark)) {
+                cursor.unregisterDrag(questionMark);
+                questionMark->handleEvent(Tile::Event::Drop);
+            }
             cursor.unregisterOver(questionMark);
             questionMark->handleEvent(Tile::Event::MouseLeave);
         } else {
