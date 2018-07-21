@@ -5,14 +5,15 @@
 #include "Cursor.hpp"
 #include "TileSet.hpp"
 #include "Axis.hpp"
+#include "TileRegistry.hpp"
 
-Game::Game() {
-    this->window = std::make_shared<sf::RenderWindow>(
-        sf::VideoMode(this->windowedWidth, this->windowedHeight), this->title, sf::Style::Default
+Game::Game() : tileSet("resources/tiles2.png") {
+    window = std::make_shared<sf::RenderWindow>(
+        sf::VideoMode(windowedWidth, windowedHeight), title, sf::Style::Default
     );
-    this->reinitializeWindow();
 
-    Tile::setWindow(this->window);
+    reinitializeWindow();
+    Tile::setWindow(window);
 }
 
 void Game::reinitializeWindow() {
@@ -25,93 +26,106 @@ void Game::reinitializeWindow() {
 }
 
 int Game::run() {
-    TileSet tileset("resources/tiles2.png");
-    auto questionMark = tileset.createTile(0, 5);
-    questionMark->setEventHandler(Tile::Event::MouseEnter, [](Tile* tile) {
-        tile->highlight();
-    });
-    questionMark->setEventHandler(Tile::Event::MouseLeave, [](Tile* tile) {
-        tile->undoHighlight();
-    });
-    questionMark->setEventHandler(Tile::Event::StartDrag, [](Tile* tile) {
-        tile->startDrag();
-    });
-    questionMark->setEventHandler(Tile::Event::Drag, [](Tile* tile) {
-        tile->drag();
-    });
-    questionMark->setEventHandler(Tile::Event::Drop, [](Tile* tile) {
-        tile->drop();
-    });
+    createTiles();
 
-    questionMark->setPosition(0, 0);
+    while (window->isOpen()) {
+        handleSystemEvents();
 
-    while (this->window->isOpen()) {
-        this->handleEvents();
+        auto tiles = TileRegistry::getAll();
+        handleTileEvents(tiles);
 
-        if (cursor.isOver(questionMark) && !cursor.isOverRegistered(questionMark)) {
-            cursor.registerOver(questionMark);
-            questionMark->handleEvent(Tile::Event::MouseEnter);
-        } else if (cursor.isOver(questionMark)) {
-            questionMark->handleEvent(Tile::Event::MouseOver);
+        window->clear(BG_LIGHT_COLOR);
 
-            if (cursor.isClick() && !cursor.isDragRegistered(questionMark)) {
-                cursor.registerDrag(questionMark);
-                questionMark->handleEvent(Tile::Event::StartDrag);
-            } else if (!cursor.isClick() && cursor.isDragRegistered(questionMark)) {
-                cursor.unregisterDrag(questionMark);
-                questionMark->handleEvent(Tile::Event::Drop);
-            }
-        } else if (!cursor.isOver(questionMark) && cursor.isOverRegistered(questionMark)) {
-            if (cursor.isDragRegistered(questionMark)) {
-                cursor.unregisterDrag(questionMark);
-                questionMark->handleEvent(Tile::Event::Drop);
-            }
-            cursor.unregisterOver(questionMark);
-            questionMark->handleEvent(Tile::Event::MouseLeave);
-        } else {
-            if (cursor.isDragRegistered(questionMark)) {
-                cursor.unregisterDrag(questionMark);
-                questionMark->handleEvent(Tile::Event::Drop);
-            }
+        for (std::size_t i=0; i<tiles.size(); i++) {
+            tiles[i]->draw(window);
         }
-        questionMark->rescale(Axis::getScale(), Axis::getScale());
 
-        this->window->clear(BG_LIGHT_COLOR);
-
-        questionMark->draw(this->window);
         cursor.draw();
-
-        this->window->display();
+        window->display();
     }
     return 0;
 }
 
-void Game::handleEvents() {
+void Game::createTiles() {
+    auto questionMark = tileSet.createTile(0, 5);
+    questionMark->setEventHandler(Tile::MouseEnter, [](Tile* tile) {
+        tile->highlight();
+    });
+    questionMark->setEventHandler(Tile::MouseLeave, [](Tile* tile) {
+        tile->undoHighlight();
+    });
+    questionMark->setEventHandler(Tile::StartDrag, [](Tile* tile) {
+        tile->startDrag();
+    });
+    questionMark->setEventHandler(Tile::Drag, [](Tile* tile) {
+        tile->drag();
+    });
+    questionMark->setEventHandler(Tile::Drop, [](Tile* tile) {
+        tile->drop();
+    });
+
+    questionMark->setPosition(0, 0);
+}
+
+void Game::handleTileEvents(const std::vector<std::shared_ptr<Tile>> &tiles) {
+    for (size_t i=0; i < tiles.size(); i++) {
+            auto tile = tiles[i];
+            if (cursor.isOver(tile) && !cursor.isOverRegistered(tile)) {
+                cursor.registerOver(tile);
+                tile->handleEvent(Tile::MouseEnter);
+            } else if (cursor.isOver(tile)) {
+                tile->handleEvent(Tile::MouseOver);
+
+                if (cursor.isClick() && !cursor.isDragRegistered(tile)) {
+                    cursor.registerDrag(tile);
+                    tile->handleEvent(Tile::StartDrag);
+                } else if (!cursor.isClick() && cursor.isDragRegistered(tile)) {
+                    cursor.unregisterDrag(tile);
+                    tile->handleEvent(Tile::Drop);
+                }
+            } else if (!cursor.isOver(tile) && cursor.isOverRegistered(tile)) {
+                if (cursor.isDragRegistered(tile)) {
+                    cursor.unregisterDrag(tile);
+                    tile->handleEvent(Tile::Drop);
+                }
+                cursor.unregisterOver(tile);
+                tile->handleEvent(Tile::MouseLeave);
+            } else {
+                if (cursor.isDragRegistered(tile)) {
+                    cursor.unregisterDrag(tile);
+                    tile->handleEvent(Tile::Drop);
+                }
+            }
+            tile->rescale(Axis::getScale(), Axis::getScale());
+        }
+}
+
+void Game::handleSystemEvents() {
     bool keyChanged = false;
 
     sf::Event event;
-    while (this->window->pollEvent(event)) {
+    while (window->pollEvent(event)) {
         switch (event.type) {
             case sf::Event::Closed: {
-                this->window->close();
+                window->close();
             } break;
             case sf::Event::KeyPressed: {
                 keyChanged = true;
-                this->keyboard.press(event.key.code);
+                keyboard.press(event.key.code);
             } break;
             case sf::Event::KeyReleased: {
                 keyChanged = true;
-                this->keyboard.release(event.key.code);
+                keyboard.release(event.key.code);
             } break;
             case sf::Event::Resized: {
-                this->width = event.size.width;
-                this->height = event.size.height;
-                this->windowedWidth = event.size.width;
-                this->windowedHeight = event.size.height;
+                width = event.size.width;
+                height = event.size.height;
+                windowedWidth = event.size.width;
+                windowedHeight = event.size.height;
 
-                sf::Vector2u newSize(this->width, this->height);
-                this->axis.rescale(newSize);
-                this->window->setView(sf::View(sf::FloatRect(0, 0, this->width, this->height)));
+                sf::Vector2u newSize(width, height);
+                axis.rescale(newSize);
+                window->setView(sf::View(sf::FloatRect(0, 0, width, height)));
             } break;
             case sf::Event::MouseButtonPressed: {
                 cursor.click(true);
@@ -125,31 +139,33 @@ void Game::handleEvents() {
         }
     }
 
-    if (!keyChanged) {
+    if (keyChanged) {
+        handleKeyboardEvents();
+    }
+}
+
+void Game::handleKeyboardEvents() {
+    if (keyboard.isPressed(sf::Keyboard::Escape) || keyboard.isPressed(sf::Keyboard::Q)) {
+        window->close();
         return;
     }
 
-    if (this->keyboard.isPressed(sf::Keyboard::Escape) || this->keyboard.isPressed(sf::Keyboard::Q)) {
-        this->window->close();
-        return;
-    }
+    if (keyboard.isPressed(sf::Keyboard::F)) {
+        isFullscreen = !isFullscreen;
 
-    if (this->keyboard.isPressed(sf::Keyboard::F)) {
-        this->fullscreen = !this->fullscreen;
-
-        if (this->fullscreen) {
-            sf::VideoMode mode = this->findHighestResolutionMode();
-            this->width = mode.width;
-            this->height = mode.height;
-            this->window->create(mode, this->title, this->fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
+        if (isFullscreen) {
+            sf::VideoMode mode = findHighestResolutionMode();
+            width = mode.width;
+            height = mode.height;
+            window->create(mode, title, isFullscreen ? sf::Style::Fullscreen : sf::Style::Default);
         } else {
-            this->width = this->windowedWidth;
-            this->height = this->windowedHeight;
+            width = windowedWidth;
+            height = windowedHeight;
 
-            sf::VideoMode mode(this->width, this->height);
-            this->window->create(mode, this->title, this->fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
+            sf::VideoMode mode(width, height);
+            window->create(mode, title, isFullscreen ? sf::Style::Fullscreen : sf::Style::Default);
         }
-        this->reinitializeWindow();
+        reinitializeWindow();
     }
 }
 
