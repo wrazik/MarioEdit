@@ -22,8 +22,6 @@ public:
 
     Tile(sf::Sprite sprite);
 
-    std::size_t getId();
-
     void setPosition(int posX, int posY);
     sf::Vector2f getPosition();
 
@@ -42,10 +40,8 @@ public:
 
 private:
 
-    static std::size_t nextId;
     static std::shared_ptr<sf::RenderWindow> window;
 
-    std::size_t id;
     sf::Vector2f highlightReturn;
     sf::Vector2i dragOffset = {0, 0};
     sf::Vector2f position;

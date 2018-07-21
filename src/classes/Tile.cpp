@@ -4,8 +4,6 @@
 #include "classes/TileRegistry.hpp"
 #include "classes/Cursor.hpp"
 
-std::size_t Tile::nextId = 1;
-
 std::shared_ptr<sf::RenderWindow> Tile::window;
 
 void Tile::setWindow(std::shared_ptr<sf::RenderWindow> &window) {
@@ -13,14 +11,7 @@ void Tile::setWindow(std::shared_ptr<sf::RenderWindow> &window) {
 }
 
 Tile::Tile(sf::Sprite sprite) {
-    this->id = nextId;
-    Tile::nextId++;
-
     this->sprite = sprite;
-}
-
-std::size_t Tile::getId() {
-    return this->id;
 }
 
 void Tile::setPosition(int posX, int posY) {
