@@ -5,14 +5,18 @@
 #include "Tile.hpp"
 #include "TileRegistry.hpp"
 
-float Axis::scale = 0;
+float Axis::scale = 1;
 
 void Axis::rescale(sf::Vector2u windowSize) {
-    std::cout << "Rescale" << std::endl;
     this->windowSize = windowSize;
 
     float prevScale = this->scale;
     this->scale = (float)windowSize.y / (float)(this->blockHeight*this->blocksOnHeight);
+
+    if (prevScale == this->scale) {
+        return;
+    }
+
     float scaleRatio = this->scale/prevScale;
 
     auto tiles = TileRegistry::getAll();

@@ -26,10 +26,6 @@ std::size_t Tile::getId() {
 void Tile::setPosition(int posX, int posY) {
     this->position = {(float)posX, (float)posY};
     this->sprite.setPosition(this->position);
-
-    if (this->isHighlightedFlag) {
-
-    }
 }
 
 sf::Vector2f Tile::getPosition() {
@@ -106,28 +102,115 @@ void Tile::setEventHandler(Tile::Event event, std::function<void(Tile* tile)> ca
 }
 
 void Tile::highlight() {
-    this->isHighlightedFlag = true;
     this->scalePromotion = 1.2f;
 
-    this->highlightReturn = this->sprite.getPosition();
     this->rescaleCenter();
     this->correctCorners();
 }
 
 void Tile::undoHighlight() {
-    std::cout << "Back" << std::endl;
-    this->isHighlightedFlag = false;
-    this->scalePromotion = 1.0f;
+    scalePromotion = 1.0f;
 
-    this->rescaleCenter();
-    this->sprite.setPosition(this->highlightReturn);
+    if (isOnTopLeftCorner()) {
+        rescaleToTopLeftCorner();
+    } else if (isOnBottomLeftCorner()) {
+        rescaleToBottomLeftCorner();
+    } else if (isOnBottomRightCorner()) {
+        rescaleToBottomRightCorner();
+    } else if (isOnTopRightCorner()) {
+        rescaleToTopRightCorner();
+    } else if (isOnLeftEdge()) {
+        rescaleToLeftEdge();
+    } else if (isOnRightEdge()) {
+        rescaleToRightEdge();
+    } else if (isOnTopEdge()) {
+        rescaleToTopEdge();
+    } else if (isOnBottomEdge()) {
+        rescaleToBottomEdge();
+    } else {
+        rescaleCenter();
+    }
+}
 
-    this->correctCorners();
+bool Tile::isOnLeftEdge() {
+    return this->position.x == 0;
+}
+
+bool Tile::isOnRightEdge() {
+    return this->position.x+this->getSize().x == this->window->getSize().x;
+}
+
+bool Tile::isOnTopEdge() {
+    return this->position.y == 0;
+}
+
+bool Tile::isOnBottomEdge() {
+    return this->position.y+this->getSize().y == this->window->getSize().y;
+}
+
+bool Tile::isOnTopRightCorner() {
+    return isOnTopEdge() && isOnRightEdge();
+}
+
+bool Tile::isOnBottomRightCorner() {
+    return isOnBottomEdge() && isOnRightEdge();
+}
+
+bool Tile::isOnBottomLeftCorner() {
+    return isOnBottomEdge() && isOnLeftEdge();
+}
+
+bool Tile::isOnTopLeftCorner() {
+    return isOnTopEdge() && isOnLeftEdge();
+}
+
+void Tile::rescaleToTopLeftCorner() {
+    auto newSpriteScaleX = this->scaleX*scalePromotion;
+    auto newSpriteScaleY = this->scaleY*scalePromotion;
+
+    sprite.setScale(newSpriteScaleX, newSpriteScaleY);
+
+    this->position.x = 0;
+    this->position.y = 0;
+    sprite.setPosition(this->position);
+}
+
+void Tile::rescaleToBottomLeftCorner() {
+    auto newSpriteScaleX = this->scaleX*scalePromotion;
+    auto newSpriteScaleY = this->scaleY*scalePromotion;
+
+    sprite.setScale(newSpriteScaleX, newSpriteScaleY);
+
+    this->position.x = 0;
+    this->position.y = this->window->getSize().y-this->getSize().y;
+    sprite.setPosition(this->position);
+}
+
+void Tile::rescaleToBottomRightCorner() {
+    auto newSpriteScaleX = this->scaleX*scalePromotion;
+    auto newSpriteScaleY = this->scaleY*scalePromotion;
+
+    sprite.setScale(newSpriteScaleX, newSpriteScaleY);
+
+    this->position.x = this->window->getSize().x-this->getSize().x;
+    this->position.y = this->window->getSize().y-this->getSize().y;
+    sprite.setPosition(this->position);
+}
+
+void Tile::rescaleToTopRightCorner() {
+    auto newSpriteScaleX = this->scaleX*scalePromotion;
+    auto newSpriteScaleY = this->scaleY*scalePromotion;
+
+    sprite.setScale(newSpriteScaleX, newSpriteScaleY);
+
+    this->position.x = this->window->getSize().x-this->getSize().x;
+    this->position.y = 0;
+    sprite.setPosition(this->position);
 }
 
 void Tile::rescaleCenter() {
-    auto newSpriteScaleX = this->scaleX*scalePromotion;
-    auto newSpriteScaleY = this->scaleY*scalePromotion;
+    auto newSpriteScaleX = scaleX*scalePromotion;
+    auto newSpriteScaleY = scaleY*scalePromotion;
 
     auto newWidth = sprite.getTextureRect().width * newSpriteScaleX;
     auto newHeight = sprite.getTextureRect().height * newSpriteScaleY;
@@ -137,9 +220,33 @@ void Tile::rescaleCenter() {
 
     sprite.setScale(newSpriteScaleX, newSpriteScaleY);
 
-    this->position.x = sprite.getPosition().x - diffWidth;
-    this->position.y = sprite.getPosition().y - diffHeight;
-    sprite.setPosition(this->position);
+    position.x = sprite.getPosition().x - diffWidth;
+    position.y = sprite.getPosition().y - diffHeight;
+    sprite.setPosition(position);
+}
+
+void Tile::rescaleToLeftEdge() {
+    rescaleCenter();
+    position.x = 0;
+    sprite.setPosition(position);
+}
+
+void Tile::rescaleToRightEdge() {
+    rescaleCenter();
+    position.x = this->window->getSize().x-this->getSize().x;
+    sprite.setPosition(position);
+}
+
+void Tile::rescaleToTopEdge() {
+    rescaleCenter();
+    position.y = 0;
+    sprite.setPosition(position);
+}
+
+void Tile::rescaleToBottomEdge() {
+    rescaleCenter();
+    position.y = this->window->getSize().y-this->getSize().y;
+    sprite.setPosition(position);
 }
 
 void Tile::correctCorners() {

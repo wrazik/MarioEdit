@@ -50,7 +50,6 @@ private:
     sf::Vector2i dragOffset = {0, 0};
     sf::Vector2f position;
 
-    bool isHighlightedFlag = false;
     float scaleX = 1.0f;
     float scaleY = 1.0f;
     float scalePromotion = 1.0f;
@@ -66,4 +65,24 @@ private:
     void rescaleCenter();
     void correctCorners();
     void recalculateHighlightReturn();
+
+    bool isOnLeftEdge();
+    bool isOnRightEdge();
+    bool isOnTopEdge();
+    bool isOnBottomEdge();
+
+    bool isOnTopLeftCorner();
+    bool isOnBottomLeftCorner();
+    bool isOnBottomRightCorner();
+    bool isOnTopRightCorner();
+
+    void rescaleToTopLeftCorner();
+    void rescaleToBottomLeftCorner();
+    void rescaleToBottomRightCorner();
+    void rescaleToTopRightCorner();
+
+    void rescaleToLeftEdge();
+    void rescaleToRightEdge();
+    void rescaleToTopEdge();
+    void rescaleToBottomEdge();
 };

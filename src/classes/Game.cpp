@@ -8,15 +8,20 @@
 
 Game::Game() {
     this->window = std::make_shared<sf::RenderWindow>(
-        sf::VideoMode(this->width, this->height), this->title, sf::Style::Default
+        sf::VideoMode(this->windowedWidth, this->windowedHeight), this->title, sf::Style::Default
     );
-    this->window->setVerticalSyncEnabled(true);
-    this->window->setFramerateLimit(100);
-    this->window->setKeyRepeatEnabled(false);
+    this->reinitializeWindow();
 
-    this->axis.rescale(this->window->getSize());
-    Cursor::reinitialize(this->window);
     Tile::setWindow(this->window);
+}
+
+void Game::reinitializeWindow() {
+    window->setVerticalSyncEnabled(true);
+    window->setFramerateLimit(100);
+    window->setKeyRepeatEnabled(false);
+
+    axis.rescale(window->getSize());
+    Cursor::reinitialize(window);
 }
 
 int Game::run() {
@@ -78,6 +83,8 @@ int Game::run() {
 }
 
 void Game::handleEvents() {
+    bool keyChanged = false;
+
     sf::Event event;
     while (this->window->pollEvent(event)) {
         switch (event.type) {
@@ -85,14 +92,18 @@ void Game::handleEvents() {
                 this->window->close();
             } break;
             case sf::Event::KeyPressed: {
+                keyChanged = true;
                 this->keyboard.press(event.key.code);
             } break;
             case sf::Event::KeyReleased: {
+                keyChanged = true;
                 this->keyboard.release(event.key.code);
             } break;
             case sf::Event::Resized: {
                 this->width = event.size.width;
                 this->height = event.size.height;
+                this->windowedWidth = event.size.width;
+                this->windowedHeight = event.size.height;
 
                 sf::Vector2u newSize(this->width, this->height);
                 this->axis.rescale(newSize);
@@ -110,15 +121,41 @@ void Game::handleEvents() {
         }
     }
 
+    if (!keyChanged) {
+        return;
+    }
+
     if (this->keyboard.isPressed(sf::Keyboard::Escape) || this->keyboard.isPressed(sf::Keyboard::Q)) {
         this->window->close();
         return;
     }
 
-    if (this->keyboard.isPressed(sf::Keyboard::F) || this->keyboard.isPressed(sf::Keyboard::G)) {
-        this->fullscreen = this->keyboard.isPressed(sf::Keyboard::F);
-        this->window->create(sf::VideoMode(this->width, this->height), this->title, this->fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
-        this->axis.rescale(this->window->getSize());
-        Cursor::reinitialize(this->window);
+    if (this->keyboard.isPressed(sf::Keyboard::F)) {
+        this->fullscreen = !this->fullscreen;
+
+        if (this->fullscreen) {
+            sf::VideoMode mode = this->findHighestResolutionMode();
+            this->width = mode.width;
+            this->height = mode.height;
+            this->window->create(mode, this->title, this->fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
+        } else {
+            this->width = this->windowedWidth;
+            this->height = this->windowedHeight;
+
+            sf::VideoMode mode(this->width, this->height);
+            this->window->create(mode, this->title, this->fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
+        }
+        this->reinitializeWindow();
     }
+}
+
+sf::VideoMode Game::findHighestResolutionMode() {
+    auto modes = sf::VideoMode::getFullscreenModes();
+    auto maxHeightMode = modes[0];
+    for (int i=0; i<modes.size(); i++) {
+        if (modes[i].height > maxHeightMode.height) {
+            maxHeightMode = modes[i];
+        }
+    }
+    return maxHeightMode;
 }
