@@ -2,7 +2,6 @@
 
 #include "classes/TileRegistry.hpp"
 #include "classes/Tile.hpp"
-#include "classes/Exception/TileNotFoundException.hpp"
 
 TEST(TileRegistryTest, test_getall_no_tiles) {
     TileRegistry::clear();
