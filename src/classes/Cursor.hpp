@@ -37,8 +37,8 @@ private:
     std::shared_ptr<sf::Texture> texture;
     std::shared_ptr<sf::Sprite> sprite;
 
-    std::vector<std::size_t> registeredOverOnTiles;
-    std::vector<std::size_t> registeredDragOnTiles;
+    std::vector<std::shared_ptr<Tile>> registeredOverOnTiles;
+    std::vector<std::shared_ptr<Tile>> registeredDragOnTiles;
 
     bool clickFlag;
 

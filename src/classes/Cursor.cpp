@@ -47,14 +47,14 @@ bool Cursor::isOver(std::shared_ptr<Tile> tile) {
 
 void Cursor::registerOver(std::shared_ptr<Tile> tile) {
     if (!this->isOverRegistered(tile)) {
-        this->registeredOverOnTiles.push_back(tile->getId());
+        this->registeredOverOnTiles.push_back(tile);
     }
 }
 
 void Cursor::unregisterOver(std::shared_ptr<Tile> tile) {
     if (this->isOverRegistered(tile)) {
         this->registeredOverOnTiles.erase(
-                std::remove(this->registeredOverOnTiles.begin(), this->registeredOverOnTiles.end(), tile->getId()), this->registeredOverOnTiles.end()
+                std::remove(this->registeredOverOnTiles.begin(), this->registeredOverOnTiles.end(), tile), this->registeredOverOnTiles.end()
         );
     }
 }
@@ -64,19 +64,19 @@ bool Cursor::isOverRegistered(std::shared_ptr<Tile> tile) {
         return false;
     }
 
-    return std::find(this->registeredOverOnTiles.begin(), this->registeredOverOnTiles.end(), tile->getId()) != this->registeredOverOnTiles.end();
+    return std::find(this->registeredOverOnTiles.begin(), this->registeredOverOnTiles.end(), tile) != this->registeredOverOnTiles.end();
 }
 
 void Cursor::registerDrag(std::shared_ptr<Tile> tile) {
     if (!this->isDragRegistered(tile)) {
-        this->registeredDragOnTiles.push_back(tile->getId());
+        this->registeredDragOnTiles.push_back(tile);
     }
 }
 
 void Cursor::unregisterDrag(std::shared_ptr<Tile> tile) {
     if (this->isDragRegistered(tile)) {
         this->registeredDragOnTiles.erase(
-                std::remove(this->registeredDragOnTiles.begin(), this->registeredDragOnTiles.end(), tile->getId()), this->registeredDragOnTiles.end()
+                std::remove(this->registeredDragOnTiles.begin(), this->registeredDragOnTiles.end(), tile), this->registeredDragOnTiles.end()
         );
     }
 }
@@ -86,7 +86,7 @@ bool Cursor::isDragRegistered(std::shared_ptr<Tile> tile) {
         return false;
     }
 
-    return std::find(this->registeredDragOnTiles.begin(), this->registeredDragOnTiles.end(), tile->getId()) != this->registeredDragOnTiles.end();
+    return std::find(this->registeredDragOnTiles.begin(), this->registeredDragOnTiles.end(), tile) != this->registeredDragOnTiles.end();
 }
 
 bool Cursor::isClick() {
@@ -99,11 +99,6 @@ void Cursor::click(bool click) {
 
 void Cursor::handleRegisteredDrags() {
     for (std::size_t i=0; i<this->registeredDragOnTiles.size(); i++) {
-        try {
-            auto tile = TileRegistry::getTile(this->registeredDragOnTiles[i]);
-            tile->handleEvent(Tile::Event::Drag);
-        } catch (TileNotFoundException& e) {
-
-        }
+        this->registeredDragOnTiles[i]->handleEvent(Tile::Event::Drag);
     }
 }
