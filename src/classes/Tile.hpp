@@ -42,7 +42,6 @@ private:
 
     static std::shared_ptr<sf::RenderWindow> window;
 
-    sf::Vector2f highlightReturn;
     sf::Vector2i dragOffset = {0, 0};
     sf::Vector2f position;
 
@@ -60,7 +59,6 @@ private:
 
     void rescaleCenter();
     void correctCorners();
-    void recalculateHighlightReturn();
 
     bool isOnLeftEdge();
     bool isOnRightEdge();
