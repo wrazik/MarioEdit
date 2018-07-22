@@ -1,11 +1,11 @@
 #include "TileSet.hpp"
-#include "Axis.hpp"
+#include "Scale.hpp"
 #include "TileRegistry.hpp"
 
 TileSet::TileSet(std::string filepath)
 {
-    this->texture = std::make_shared<sf::Texture>();
-    this->texture->loadFromFile(filepath);
+    texture = std::make_shared<sf::Texture>();
+    texture->loadFromFile(filepath);
 }
 
 void TileSet::setTileSeparators(std::size_t separatorX, std::size_t separatorY)
@@ -23,15 +23,15 @@ void TileSet::setTileOffset(std::size_t offsetX, std::size_t offsetY)
 std::shared_ptr<Tile> TileSet::createTile(std::size_t x, std::size_t y)
 {
     sf::Sprite sprite;
-    sprite.setTexture(*(this->texture));
-    sprite.setScale(Axis::getScale(), Axis::getScale());
+    sprite.setTexture(*(texture));
+    sprite.setScale(Scale::getScale(), Scale::getScale());
 
     sf::IntRect textureRect;
-    textureRect.width = this->tileWidth;
-    textureRect.height = this->tileHeight;
+    textureRect.width = tileWidth;
+    textureRect.height = tileHeight;
 
-    textureRect.top = (y * (this->tileHeight+separatorY)) + this->offsetY;
-    textureRect.left = (x * (this->tileHeight+separatorX)) + this->offsetX;
+    textureRect.top = (y * (tileHeight+separatorY)) + offsetY;
+    textureRect.left = (x * (tileHeight+separatorX)) + offsetX;
     sprite.setTextureRect(textureRect);
 
     auto tile = std::make_shared<Tile>(sprite);

@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include "Keyboard.hpp"
-#include "Axis.hpp"
+#include "Scale.hpp"
 #include "Cursor.hpp"
 #include "TileSet.hpp"
 
@@ -26,7 +26,7 @@ private:
 
     std::shared_ptr<sf::RenderWindow> window;
 
-    Axis axis;
+    Scale axis;
     Cursor cursor;
     Keyboard keyboard;
     TileSet tileSet;
@@ -40,4 +40,6 @@ private:
 
     void reinitializeWindow();
     sf::VideoMode findHighestResolutionMode();
+
+    void rescaleTilesPosition();
 };

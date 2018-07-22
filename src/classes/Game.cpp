@@ -4,7 +4,7 @@
 #include "defines.hpp"
 #include "Cursor.hpp"
 #include "TileSet.hpp"
-#include "Axis.hpp"
+#include "Scale.hpp"
 #include "TileRegistry.hpp"
 
 Game::Game() : tileSet("resources/tiles2.png") {
@@ -22,7 +22,18 @@ void Game::reinitializeWindow() {
     window->setKeyRepeatEnabled(false);
 
     axis.rescale(window->getSize());
+    rescaleTilesPosition();
+
     Cursor::reinitialize(window);
+}
+
+void Game::rescaleTilesPosition() {
+    auto tiles = TileRegistry::getAll();
+    for (int i=0; i<tiles.size(); i++) {
+        auto tile = tiles.at(i);
+        auto position = tile->getPosition();
+        tile->setPosition(position.x * Scale::getScaleRatio(), position.y * Scale::getScaleRatio());
+    }
 }
 
 int Game::run() {
@@ -96,7 +107,7 @@ void Game::handleTileEvents(const std::vector<std::shared_ptr<Tile>> &tiles) {
                     tile->handleEvent(Tile::Drop);
                 }
             }
-            tile->rescale(Axis::getScale(), Axis::getScale());
+            tile->rescale(Scale::getScale(), Scale::getScale());
         }
 }
 
