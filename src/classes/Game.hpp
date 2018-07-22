@@ -3,13 +3,13 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include "Keyboard.hpp"
+#include "Axis.hpp"
+#include "Cursor.hpp"
+#include "TileSet.hpp"
 
 class Game {
 
 public:
-
-    static std::size_t getWidth();
-    static std::size_t getHeight();
 
     Game();
 
@@ -17,13 +17,27 @@ public:
 
 private:
 
-    static const std::size_t width = 1280;
-    static const std::size_t height = 800;
+    const std::string title = "Mario::Edit";
+    std::size_t width = 1280;
+    std::size_t height = 960;
+    std::size_t windowedWidth = 1280;
+    std::size_t windowedHeight = 960;
+    bool isFullscreen = false;
 
     std::shared_ptr<sf::RenderWindow> window;
-    
+
+    Axis axis;
+    Cursor cursor;
     Keyboard keyboard;
+    TileSet tileSet;
 
-    void handleEvents();
 
+    void handleSystemEvents();
+    void handleTileEvents(const std::vector<std::shared_ptr<Tile>> &tiles);
+    void createTiles();
+
+    void handleKeyboardEvents();
+
+    void reinitializeWindow();
+    sf::VideoMode findHighestResolutionMode();
 };

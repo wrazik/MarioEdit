@@ -14,7 +14,7 @@ public:
 
     void setTileSeparators(std::size_t separatorX, std::size_t separatorY);
     void setTileOffset(std::size_t offsetX, std::size_t offsetY);
-    Tile createTile(std::size_t x, std::size_t y);
+    std::shared_ptr<Tile> createTile(std::size_t x, std::size_t y);
 
 private:
 

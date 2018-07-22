@@ -1,8 +1,8 @@
 #include "Tile.hpp"
 
 #include <iostream>
-
-std::size_t Tile::nextId = 1;
+#include "classes/TileRegistry.hpp"
+#include "classes/Cursor.hpp"
 
 std::shared_ptr<sf::RenderWindow> Tile::window;
 
@@ -11,18 +11,12 @@ void Tile::setWindow(std::shared_ptr<sf::RenderWindow> &window) {
 }
 
 Tile::Tile(sf::Sprite sprite) {
-    this->id = nextId;
-    Tile::nextId++;
-
     this->sprite = sprite;
 }
 
-std::size_t Tile::getId() {
-    return this->id;
-}
-
 void Tile::setPosition(int posX, int posY) {
-    this->sprite.setPosition(posX, posY);
+    this->position = {(float)posX, (float)posY};
+    this->sprite.setPosition(this->position);
 }
 
 sf::Vector2f Tile::getPosition() {
@@ -57,6 +51,21 @@ void Tile::handleEvent(Tile::Event event) {
                 this->mouseLeaveCallback(this);
             }
         } break;
+        case Tile::Event::StartDrag: {
+            if (this->startDragCallback != nullptr) {
+                this->startDragCallback(this);
+            }
+        } break;
+        case Tile::Event::Drag: {
+            if (this->dragCallback != nullptr) {
+                this->dragCallback(this);
+            }
+        } break;
+        case Tile::Event::Drop: {
+            if (this->dropCallback != nullptr) {
+                this->dropCallback(this);
+            }
+        } break;
     }
 }
 
@@ -71,36 +80,164 @@ void Tile::setEventHandler(Tile::Event event, std::function<void(Tile* tile)> ca
         case Tile::Event::MouseLeave: {
             this->mouseLeaveCallback = callback;
         } break;
+        case Tile::Event::StartDrag: {
+            this->startDragCallback = callback;
+        } break;
+        case Tile::Event::Drag: {
+            this->dragCallback = callback;
+        } break;
+        case Tile::Event::Drop: {
+            this->dropCallback = callback;
+        } break;
     }
 }
 
 void Tile::highlight() {
-    auto newSpriteScale = this->sprite.getScale()*1.4f;
+    this->scalePromotion = 1.2f;
 
-    this->highlightReturn = this->sprite.getPosition();
-    this->rescaleCenter(newSpriteScale);
+    this->rescaleCenter();
     this->correctCorners();
 }
 
 void Tile::undoHighlight() {
-    auto newSpriteScale = this->sprite.getScale()/1.4f;
+    scalePromotion = 1.0f;
 
-    this->rescaleCenter(newSpriteScale);
-    this->sprite.setPosition(this->highlightReturn);
+    if (isOnTopLeftCorner()) {
+        rescaleToTopLeftCorner();
+    } else if (isOnBottomLeftCorner()) {
+        rescaleToBottomLeftCorner();
+    } else if (isOnBottomRightCorner()) {
+        rescaleToBottomRightCorner();
+    } else if (isOnTopRightCorner()) {
+        rescaleToTopRightCorner();
+    } else if (isOnLeftEdge()) {
+        rescaleToLeftEdge();
+    } else if (isOnRightEdge()) {
+        rescaleToRightEdge();
+    } else if (isOnTopEdge()) {
+        rescaleToTopEdge();
+    } else if (isOnBottomEdge()) {
+        rescaleToBottomEdge();
+    } else {
+        rescaleCenter();
+    }
 }
 
-void Tile::rescaleCenter(const sf::Vector2<float> &newSpriteScale) {
-    auto newWidth = sprite.getTextureRect().width * newSpriteScale.x;
-    auto newHeight = sprite.getTextureRect().height * newSpriteScale.y;
+bool Tile::isOnLeftEdge() {
+    return this->position.x == 0;
+}
+
+bool Tile::isOnRightEdge() {
+    return this->position.x+this->getSize().x == this->window->getSize().x;
+}
+
+bool Tile::isOnTopEdge() {
+    return this->position.y == 0;
+}
+
+bool Tile::isOnBottomEdge() {
+    return this->position.y+this->getSize().y == this->window->getSize().y;
+}
+
+bool Tile::isOnTopRightCorner() {
+    return isOnTopEdge() && isOnRightEdge();
+}
+
+bool Tile::isOnBottomRightCorner() {
+    return isOnBottomEdge() && isOnRightEdge();
+}
+
+bool Tile::isOnBottomLeftCorner() {
+    return isOnBottomEdge() && isOnLeftEdge();
+}
+
+bool Tile::isOnTopLeftCorner() {
+    return isOnTopEdge() && isOnLeftEdge();
+}
+
+void Tile::rescaleToTopLeftCorner() {
+    auto newSpriteScaleX = this->scaleX*scalePromotion;
+    auto newSpriteScaleY = this->scaleY*scalePromotion;
+
+    sprite.setScale(newSpriteScaleX, newSpriteScaleY);
+
+    this->position.x = 0;
+    this->position.y = 0;
+    sprite.setPosition(this->position);
+}
+
+void Tile::rescaleToBottomLeftCorner() {
+    auto newSpriteScaleX = this->scaleX*scalePromotion;
+    auto newSpriteScaleY = this->scaleY*scalePromotion;
+
+    sprite.setScale(newSpriteScaleX, newSpriteScaleY);
+
+    this->position.x = 0;
+    this->position.y = this->window->getSize().y-this->getSize().y;
+    sprite.setPosition(this->position);
+}
+
+void Tile::rescaleToBottomRightCorner() {
+    auto newSpriteScaleX = this->scaleX*scalePromotion;
+    auto newSpriteScaleY = this->scaleY*scalePromotion;
+
+    sprite.setScale(newSpriteScaleX, newSpriteScaleY);
+
+    this->position.x = this->window->getSize().x-this->getSize().x;
+    this->position.y = this->window->getSize().y-this->getSize().y;
+    sprite.setPosition(this->position);
+}
+
+void Tile::rescaleToTopRightCorner() {
+    auto newSpriteScaleX = this->scaleX*scalePromotion;
+    auto newSpriteScaleY = this->scaleY*scalePromotion;
+
+    sprite.setScale(newSpriteScaleX, newSpriteScaleY);
+
+    this->position.x = this->window->getSize().x-this->getSize().x;
+    this->position.y = 0;
+    sprite.setPosition(this->position);
+}
+
+void Tile::rescaleCenter() {
+    auto newSpriteScaleX = scaleX*scalePromotion;
+    auto newSpriteScaleY = scaleY*scalePromotion;
+
+    auto newWidth = sprite.getTextureRect().width * newSpriteScaleX;
+    auto newHeight = sprite.getTextureRect().height * newSpriteScaleY;
 
     auto diffWidth = (newWidth - getSize().x) / 2;
     auto diffHeight = (newHeight - getSize().y) / 2;
 
-    sprite.setScale(newSpriteScale);
-    sprite.setPosition(
-        sprite.getPosition().x - diffWidth,
-        sprite.getPosition().y - diffHeight
-    );
+    sprite.setScale(newSpriteScaleX, newSpriteScaleY);
+
+    position.x = sprite.getPosition().x - diffWidth;
+    position.y = sprite.getPosition().y - diffHeight;
+    sprite.setPosition(position);
+}
+
+void Tile::rescaleToLeftEdge() {
+    rescaleCenter();
+    position.x = 0;
+    sprite.setPosition(position);
+}
+
+void Tile::rescaleToRightEdge() {
+    rescaleCenter();
+    position.x = this->window->getSize().x-this->getSize().x;
+    sprite.setPosition(position);
+}
+
+void Tile::rescaleToTopEdge() {
+    rescaleCenter();
+    position.y = 0;
+    sprite.setPosition(position);
+}
+
+void Tile::rescaleToBottomEdge() {
+    rescaleCenter();
+    position.y = this->window->getSize().y-this->getSize().y;
+    sprite.setPosition(position);
 }
 
 void Tile::correctCorners() {
@@ -127,5 +264,35 @@ void Tile::correctCorners() {
         posY = windowHeight-height;
     }
 
-    this->sprite.setPosition(posX, posY);
+    this->position.x = posX;
+    this->position.y = posY;
+    this->sprite.setPosition(this->position);
+}
+
+void Tile::rescale(float scaleX, float scaleY) {
+    this->scaleX = scaleX;
+    this->scaleY = scaleY;
+    this->sprite.setScale(scaleX*scalePromotion, scaleY*scalePromotion);
+}
+
+void Tile::startDrag() {
+    sprite.setColor(sf::Color(255, 255, 255, 180));
+
+    auto cursorPosition = Cursor::getCurrentPosition();
+    dragOffset.x = cursorPosition.x - sprite.getPosition().x;
+    dragOffset.y = cursorPosition.y - sprite.getPosition().y;
+    this->drag();
+}
+
+void Tile::drag() {
+    auto cursorPosition = Cursor::getCurrentPosition();
+    cursorPosition -= this->dragOffset;
+    sprite.setPosition(cursorPosition.x, cursorPosition.y);
+
+    this->correctCorners();
+}
+
+void Tile::drop() {
+    sprite.setColor(sf::Color(255, 255, 255, 255));
+    dragOffset = {0, 0};
 }

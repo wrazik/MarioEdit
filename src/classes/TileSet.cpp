@@ -1,4 +1,6 @@
 #include "TileSet.hpp"
+#include "Axis.hpp"
+#include "TileRegistry.hpp"
 
 TileSet::TileSet(std::string filepath)
 {
@@ -18,11 +20,11 @@ void TileSet::setTileOffset(std::size_t offsetX, std::size_t offsetY)
     this->offsetY = offsetY;
 }
 
-Tile TileSet::createTile(std::size_t x, std::size_t y)
+std::shared_ptr<Tile> TileSet::createTile(std::size_t x, std::size_t y)
 {
     sf::Sprite sprite;
     sprite.setTexture(*(this->texture));
-    sprite.setScale(this->scale, this->scale);
+    sprite.setScale(Axis::getScale(), Axis::getScale());
 
     sf::IntRect textureRect;
     textureRect.width = this->tileWidth;
@@ -32,5 +34,8 @@ Tile TileSet::createTile(std::size_t x, std::size_t y)
     textureRect.left = (x * (this->tileHeight+separatorX)) + this->offsetX;
     sprite.setTextureRect(textureRect);
 
-    return Tile(sprite);
+    auto tile = std::make_shared<Tile>(sprite);
+    TileRegistry::registerTile(tile);
+
+    return tile;
 }

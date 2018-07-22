@@ -11,8 +11,7 @@ void Keyboard::release(sf::Keyboard::Key key) {
 bool Keyboard::isPressed(sf::Keyboard::Key key) {
 
     std::map<sf::Keyboard::Key, bool>::iterator it = this->keys.find(key);
-    if(it != this->keys.end())
-    {
+    if (it != this->keys.end()) {
        return it->second;
     }
 
