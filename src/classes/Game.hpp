@@ -6,6 +6,7 @@
 #include "Scale.hpp"
 #include "Cursor.hpp"
 #include "TileSet.hpp"
+#include "Grid.hpp"
 
 class Game {
 
@@ -18,6 +19,7 @@ public:
 private:
 
     const std::string title = "Mario::Edit";
+    std::size_t minWindowHeight = 640;
     std::size_t width = 1280;
     std::size_t height = 960;
     std::size_t windowedWidth = 1280;
@@ -30,6 +32,7 @@ private:
     Cursor cursor;
     Keyboard keyboard;
     TileSet tileSet;
+    std::shared_ptr<Grid> grid;
 
 
     void handleSystemEvents();

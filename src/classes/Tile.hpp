@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <functional>
+#include "classes/Grid.hpp"
 
 class Tile
 {
@@ -25,6 +26,8 @@ public:
     void setPosition(int posX, int posY);
     sf::Vector2f getPosition();
 
+    void setGrid(std::shared_ptr<Grid> grid);
+
     sf::Vector2i getSize();
 
     void rescale(float scaleX, float scaleY);
@@ -44,18 +47,23 @@ private:
 
     sf::Vector2i dragOffset = {0, 0};
     sf::Vector2f position;
+    std::shared_ptr<Grid> grid;
 
     float scaleX = 1.0f;
     float scaleY = 1.0f;
     float scalePromotion = 1.0f;
 
     sf::Sprite sprite;
+
+    bool isMouseOver = false;
     std::function<void(Tile* tile)> mouseOverCallback = nullptr;
     std::function<void(Tile* tile)> mouseEnterCallback = nullptr;
     std::function<void(Tile* tile)> mouseLeaveCallback = nullptr;
     std::function<void(Tile* tile)> startDragCallback = nullptr;
     std::function<void(Tile* tile)> dragCallback = nullptr;
     std::function<void(Tile* tile)> dropCallback = nullptr;
+
+    sf::Vector2f getCenterPoint();
 
     void rescaleCenter();
     void correctCorners();

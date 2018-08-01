@@ -23,6 +23,10 @@ sf::Vector2f Tile::getPosition() {
     return sprite.getPosition();
 }
 
+void Tile::setGrid(std::shared_ptr<Grid> grid) {
+    this->grid = grid;
+}
+
 sf::Vector2i Tile::getSize() {
     return sf::Vector2i(
             sprite.getTextureRect().width*sprite.getScale().x,
@@ -37,16 +41,19 @@ void Tile::draw(std::shared_ptr<sf::RenderWindow> window) {
 void Tile::handleEvent(Tile::Event event) {
     switch (event) {
         case Tile::Event::MouseOver: {
+            isMouseOver = true;
             if (mouseOverCallback != nullptr) {
                 mouseOverCallback(this);
             }
         } break;
         case Tile::Event::MouseEnter: {
+            isMouseOver = true;
             if (mouseEnterCallback != nullptr) {
                 mouseEnterCallback(this);
             }
         } break;
         case Tile::Event::MouseLeave: {
+            isMouseOver = false;
             if (mouseLeaveCallback != nullptr) {
                 mouseLeaveCallback(this);
             }
@@ -279,12 +286,18 @@ void Tile::startDrag() {
     sprite.setColor(sf::Color(255, 255, 255, 180));
 
     auto cursorPosition = Cursor::getCurrentPosition();
+    grid->setHightlightPosition(cursorPosition);
+    
     dragOffset.x = cursorPosition.x - sprite.getPosition().x;
     dragOffset.y = cursorPosition.y - sprite.getPosition().y;
+
+    grid->hightlightOn();
 }
 
 void Tile::drag() {
     auto cursorPosition = Cursor::getCurrentPosition();
+    grid->setHightlightPosition(cursorPosition);
+
     cursorPosition -= dragOffset;
     sprite.setPosition(cursorPosition.x, cursorPosition.y);
 
@@ -294,4 +307,20 @@ void Tile::drag() {
 void Tile::drop() {
     sprite.setColor(sf::Color(255, 255, 255, 255));
     dragOffset = {0, 0};
+
+    sf::Vector2i cursorPosition = Cursor::getCurrentPosition();
+    sf::Vector2f positionOnGrid = grid->getPointOnGrid({(float)cursorPosition.x, (float)cursorPosition.y});
+    if (isMouseOver) {
+        positionOnGrid.x -= (getSize().x-(getSize().x/scalePromotion))/2;
+        positionOnGrid.y -= (getSize().y-(getSize().y/scalePromotion))/2;
+    }
+    setPosition(positionOnGrid.x, positionOnGrid.y);
+    grid->hightlightOff();
+}
+
+sf::Vector2f Tile::getCenterPoint() {
+    sf::Vector2f retval = position;
+    retval.x += getSize().x/2;
+    retval.y += getSize().y/2;
+    return retval;
 }
