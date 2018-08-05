@@ -23,14 +23,14 @@ public:
 
     Tile(sf::Sprite sprite);
 
-    void setPosition(int posX, int posY);
+    void setPosition(sf::Vector2f position);
     sf::Vector2f getPosition();
 
     void setGrid(std::shared_ptr<Grid> grid);
 
     sf::Vector2i getSize();
 
-    void rescale(float scaleX, float scaleY);
+    void rescale(float scale);
     void draw(std::shared_ptr<sf::RenderWindow> window);
     void handleEvent(Tile::Event event);
     void setEventHandler(Tile::Event event, std::function<void(Tile* tile)> callback);
@@ -45,12 +45,11 @@ private:
 
     static std::shared_ptr<sf::RenderWindow> window;
 
-    sf::Vector2i dragOffset = {0, 0};
+    sf::Vector2f dragOffset = {0.0f, 0.0f};
     sf::Vector2f position;
     std::shared_ptr<Grid> grid;
 
-    float scaleX = 1.0f;
-    float scaleY = 1.0f;
+    sf::Vector2f scale = {1.0f, 1.0f};
     float scalePromotion = 1.0f;
 
     sf::Sprite sprite;

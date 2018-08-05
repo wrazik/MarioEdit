@@ -33,8 +33,8 @@ void Game::rescaleTilesPosition() {
     auto tiles = TileRegistry::getAll();
     for (int i=0; i<tiles.size(); i++) {
         auto tile = tiles.at(i);
-        auto position = tile->getPosition();
-        tile->setPosition(position.x * Scale::getScaleRatio(), position.y * Scale::getScaleRatio());
+        auto position = tile->getPosition()*Scale::getScaleRatio();
+        tile->setPosition(position);
     }
 }
 
@@ -78,7 +78,6 @@ void Game::createTiles() {
         tile->drop();
     });
 
-    questionMark->setPosition(0, 0);
     questionMark->setGrid(grid);
 }
 
@@ -111,7 +110,7 @@ void Game::handleTileEvents(const std::vector<std::shared_ptr<Tile>> &tiles) {
                 tile->handleEvent(Tile::Drop);
             }
         }
-        tile->rescale(Scale::getScale(), Scale::getScale());
+        tile->rescale(Scale::getScale());
     }
 }
 

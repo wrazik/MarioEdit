@@ -10,7 +10,7 @@ class Cursor {
 public:
 
     static void reinitialize(std::shared_ptr<sf::RenderWindow> &window);
-    static sf::Vector2i getCurrentPosition();
+    static sf::Vector2f getCurrentPosition();
 
     Cursor();
 

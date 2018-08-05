@@ -14,8 +14,8 @@ Tile::Tile(sf::Sprite sprite) {
     this->sprite = sprite;
 }
 
-void Tile::setPosition(int posX, int posY) {
-    position = {(float)posX, (float)posY};
+void Tile::setPosition(sf::Vector2f position) {
+    this->position = position;
     sprite.setPosition(position);
 }
 
@@ -29,8 +29,8 @@ void Tile::setGrid(std::shared_ptr<Grid> grid) {
 
 sf::Vector2i Tile::getSize() {
     return sf::Vector2i(
-            sprite.getTextureRect().width*sprite.getScale().x,
-            sprite.getTextureRect().height*sprite.getScale().y
+        sprite.getTextureRect().width * sprite.getScale().x,
+        sprite.getTextureRect().height * sprite.getScale().y
     );
 }
 
@@ -163,10 +163,7 @@ bool Tile::isOnTopLeftCorner() {
 }
 
 void Tile::rescaleToTopLeftCorner() {
-    auto newSpriteScaleX = scaleX*scalePromotion;
-    auto newSpriteScaleY = scaleY*scalePromotion;
-
-    sprite.setScale(newSpriteScaleX, newSpriteScaleY);
+    sprite.setScale(scale*scalePromotion);
 
     position.x = 0;
     position.y = 0;
@@ -174,10 +171,7 @@ void Tile::rescaleToTopLeftCorner() {
 }
 
 void Tile::rescaleToBottomLeftCorner() {
-    auto newSpriteScaleX = scaleX*scalePromotion;
-    auto newSpriteScaleY = scaleY*scalePromotion;
-
-    sprite.setScale(newSpriteScaleX, newSpriteScaleY);
+    sprite.setScale(scale*scalePromotion);
 
     position.x = 0;
     position.y = window->getSize().y-getSize().y;
@@ -185,10 +179,7 @@ void Tile::rescaleToBottomLeftCorner() {
 }
 
 void Tile::rescaleToBottomRightCorner() {
-    auto newSpriteScaleX = scaleX*scalePromotion;
-    auto newSpriteScaleY = scaleY*scalePromotion;
-
-    sprite.setScale(newSpriteScaleX, newSpriteScaleY);
+    sprite.setScale(scale*scalePromotion);
 
     position.x = window->getSize().x-getSize().x;
     position.y = window->getSize().y-getSize().y;
@@ -196,10 +187,7 @@ void Tile::rescaleToBottomRightCorner() {
 }
 
 void Tile::rescaleToTopRightCorner() {
-    auto newSpriteScaleX = scaleX*scalePromotion;
-    auto newSpriteScaleY = scaleY*scalePromotion;
-
-    sprite.setScale(newSpriteScaleX, newSpriteScaleY);
+    sprite.setScale(scale*scalePromotion);
 
     position.x = window->getSize().x-getSize().x;
     position.y = 0;
@@ -207,16 +195,15 @@ void Tile::rescaleToTopRightCorner() {
 }
 
 void Tile::rescaleCenter() {
-    auto newSpriteScaleX = scaleX*scalePromotion;
-    auto newSpriteScaleY = scaleY*scalePromotion;
+    auto newSpriteScale = scale*scalePromotion;
 
-    auto newWidth = sprite.getTextureRect().width * newSpriteScaleX;
-    auto newHeight = sprite.getTextureRect().height * newSpriteScaleY;
+    auto newWidth = sprite.getTextureRect().width * newSpriteScale.x;
+    auto newHeight = sprite.getTextureRect().height * newSpriteScale.y;
 
     auto diffWidth = (newWidth - getSize().x) / 2;
     auto diffHeight = (newHeight - getSize().y) / 2;
 
-    sprite.setScale(newSpriteScaleX, newSpriteScaleY);
+    sprite.setScale(newSpriteScale.x, newSpriteScale.y);
 
     position.x = sprite.getPosition().x - diffWidth;
     position.y = sprite.getPosition().y - diffHeight;
@@ -276,10 +263,9 @@ void Tile::correctCorners() {
     sprite.setPosition(position);
 }
 
-void Tile::rescale(float scaleX, float scaleY) {
-    this->scaleX = scaleX;
-    this->scaleY = scaleY;
-    sprite.setScale(scaleX*scalePromotion, scaleY*scalePromotion);
+void Tile::rescale(float scale) {
+    this->scale = sf::Vector2f(scale, scale);
+    sprite.setScale(this->scale*scalePromotion);
 }
 
 void Tile::startDrag() {
@@ -288,8 +274,7 @@ void Tile::startDrag() {
     auto cursorPosition = Cursor::getCurrentPosition();
     grid->setHightlightPosition(cursorPosition);
     
-    dragOffset.x = cursorPosition.x - sprite.getPosition().x;
-    dragOffset.y = cursorPosition.y - sprite.getPosition().y;
+    dragOffset = sf::Vector2f(cursorPosition) - sprite.getPosition();
 
     grid->hightlightOn();
 }
@@ -299,7 +284,7 @@ void Tile::drag() {
     grid->setHightlightPosition(cursorPosition);
 
     cursorPosition -= dragOffset;
-    sprite.setPosition(cursorPosition.x, cursorPosition.y);
+    sprite.setPosition(sf::Vector2f(cursorPosition));
 
     correctCorners();
 }
@@ -308,14 +293,19 @@ void Tile::drop() {
     sprite.setColor(sf::Color(255, 255, 255, 255));
     dragOffset = {0, 0};
 
-    sf::Vector2i cursorPosition = Cursor::getCurrentPosition();
-    sf::Vector2f positionOnGrid = grid->getPointOnGrid({(float)cursorPosition.x, (float)cursorPosition.y});
+    sf::Vector2f cursorPosition = Cursor::getCurrentPosition();
+    sf::Vector2f positionOnGrid = grid->getPointOnGrid(sf::Vector2f(cursorPosition));
     if (isMouseOver) {
-        positionOnGrid.x -= (getSize().x-(getSize().x/scalePromotion))/2;
-        positionOnGrid.y -= (getSize().y-(getSize().y/scalePromotion))/2;
+        sf::Vector2f tileSize(getSize());
+        positionOnGrid -= (tileSize-(tileSize/scalePromotion))/2.0f;
     }
-    setPosition(positionOnGrid.x, positionOnGrid.y);
+
+    setPosition(positionOnGrid);
     grid->hightlightOff();
+
+    if (isMouseOver) {
+        correctCorners();
+    }
 }
 
 sf::Vector2f Tile::getCenterPoint() {

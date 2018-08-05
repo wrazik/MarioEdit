@@ -14,7 +14,7 @@ public:
 
     void hightlightOn();
     void hightlightOff();
-    void setHightlightPosition(sf::Vector2i cursorPosition);
+    void setHightlightPosition(sf::Vector2f cursorPosition);
 
 private:
 

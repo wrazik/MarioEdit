@@ -23,8 +23,8 @@ void Cursor::updatePosition() {
     sprite->setPosition(mousePosition.x, mousePosition.y);
 }
 
-sf::Vector2i Cursor::getCurrentPosition() {
-    return sf::Mouse::getPosition(*(window));
+sf::Vector2f Cursor::getCurrentPosition() {
+    return sf::Vector2f(sf::Mouse::getPosition(*(window)));
 }
 
 void Cursor::draw() {

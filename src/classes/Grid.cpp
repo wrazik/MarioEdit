@@ -74,6 +74,6 @@ void Grid::hightlightOff() {
     hightlight = false;
 }
 
-void Grid::setHightlightPosition(sf::Vector2i cursorPosition) {
-    highlightPosition = getPointOnGrid({(float)cursorPosition.x, (float)cursorPosition.y});
+void Grid::setHightlightPosition(sf::Vector2f cursorPosition) {
+    highlightPosition = getPointOnGrid(cursorPosition);
 }
