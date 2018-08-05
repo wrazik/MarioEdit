@@ -10,6 +10,7 @@ public:
     Grid(sf::Vector2u windowSize);
     void rescale(sf::Vector2u windowSize);
     sf::Vector2f getPointOnGrid(sf::Vector2f pointOnScreen);
+    sf::Vector2f getHighlightPosition();
     void draw(std::shared_ptr<sf::RenderWindow> window);
 
     void hightlightOn();

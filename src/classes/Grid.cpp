@@ -35,6 +35,10 @@ void Grid::draw(std::shared_ptr<sf::RenderWindow> window) {
     }
 }
 
+sf::Vector2f Grid::getHighlightPosition() {
+    return highlightPosition;
+}
+
 void Grid::drawHorizontalLine(std::size_t number, std::shared_ptr<sf::RenderWindow> window) {
     std::size_t posY = number*distance;
 

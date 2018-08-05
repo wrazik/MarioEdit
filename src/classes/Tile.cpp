@@ -258,8 +258,7 @@ void Tile::correctCorners() {
         posY = windowHeight-height;
     }
 
-    position.x = posX;
-    position.y = posY;
+    position = sf::Vector2f(posX, posY);
     sprite.setPosition(position);
 }
 
@@ -293,8 +292,7 @@ void Tile::drop() {
     sprite.setColor(sf::Color(255, 255, 255, 255));
     dragOffset = {0, 0};
 
-    sf::Vector2f cursorPosition = Cursor::getCurrentPosition();
-    sf::Vector2f positionOnGrid = grid->getPointOnGrid(sf::Vector2f(cursorPosition));
+    sf::Vector2f positionOnGrid = grid->getHighlightPosition();
     if (isMouseOver) {
         sf::Vector2f tileSize(getSize());
         positionOnGrid -= (tileSize-(tileSize/scalePromotion))/2.0f;
