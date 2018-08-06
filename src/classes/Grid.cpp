@@ -20,6 +20,10 @@ sf::Vector2f Grid::getPointOnGrid(sf::Vector2f pointOnScreen) {
     return retval;
 }
 
+sf::Vector2f Grid::pointOnGridToPosition(sf::Vector2u pointOnGrid) {
+    return sf::Vector2f(pointOnGrid) * distance;
+}
+
 void Grid::draw(std::shared_ptr<sf::RenderWindow> window) {
     for (int i=0; i<rows+1; i++) {
         drawHorizontalLine(i, window);
@@ -33,10 +37,6 @@ void Grid::draw(std::shared_ptr<sf::RenderWindow> window) {
     if (hightlight) {
         drawHightlight(window);
     }
-}
-
-sf::Vector2f Grid::getHighlightPosition() {
-    return highlightPosition;
 }
 
 void Grid::drawHorizontalLine(std::size_t number, std::shared_ptr<sf::RenderWindow> window) {
@@ -68,6 +68,14 @@ void Grid::drawHightlight(std::shared_ptr<sf::RenderWindow> window) {
     line.setSize(sf::Vector2f(distance, distance));
 
     window->draw(line);
+}
+
+sf::Vector2f Grid::getHighlightPosition() {
+    return highlightPosition;
+}
+
+sf::Vector2u Grid::getHighlightPlace() {
+    return sf::Vector2u(highlightPosition/distance);
 }
 
 void Grid::hightlightOn() {

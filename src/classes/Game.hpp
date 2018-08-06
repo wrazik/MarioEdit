@@ -28,7 +28,7 @@ private:
 
     std::shared_ptr<sf::RenderWindow> window;
 
-    Scale axis;
+    Scale scale;
     Cursor cursor;
     Keyboard keyboard;
     TileSet tileSet;
@@ -38,6 +38,7 @@ private:
     void handleSystemEvents();
     void handleTileEvents(const std::vector<std::shared_ptr<Tile>> &tiles);
     void createTiles();
+    void rearrangeTiles();
 
     void handleKeyboardEvents();
 

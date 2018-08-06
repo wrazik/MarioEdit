@@ -27,6 +27,15 @@ void Tile::setGrid(std::shared_ptr<Grid> grid) {
     this->grid = grid;
 }
 
+void Tile::putOnGrid() {
+    setPosition(grid->pointOnGridToPosition(gridPosition));
+}
+
+void Tile::putOnGrid(sf::Vector2u gridPosition) {
+    this->gridPosition = gridPosition;
+    setPosition(grid->pointOnGridToPosition(gridPosition));
+}
+
 sf::Vector2i Tile::getSize() {
     return sf::Vector2i(
         sprite.getTextureRect().width * sprite.getScale().x,
@@ -128,6 +137,7 @@ void Tile::undoHighlight() {
     } else {
         rescaleCenter();
     }
+    putOnGrid();
 }
 
 bool Tile::isOnLeftEdge() {
@@ -291,6 +301,8 @@ void Tile::drag() {
 void Tile::drop() {
     sprite.setColor(sf::Color(255, 255, 255, 255));
     dragOffset = {0, 0};
+
+    putOnGrid(grid->getHighlightPlace());
 
     sf::Vector2f positionOnGrid = grid->getHighlightPosition();
     if (isMouseOver) {

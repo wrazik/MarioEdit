@@ -27,6 +27,8 @@ public:
     sf::Vector2f getPosition();
 
     void setGrid(std::shared_ptr<Grid> grid);
+    void putOnGrid();
+    void putOnGrid(sf::Vector2u gridPosition);
 
     sf::Vector2i getSize();
 
@@ -47,7 +49,9 @@ private:
 
     sf::Vector2f dragOffset = {0.0f, 0.0f};
     sf::Vector2f position;
+    
     std::shared_ptr<Grid> grid;
+    sf::Vector2u gridPosition;
 
     sf::Vector2f scale = {1.0f, 1.0f};
     float scalePromotion = 1.0f;

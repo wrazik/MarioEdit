@@ -21,12 +21,13 @@ void Game::reinitializeWindow() {
     window->setFramerateLimit(100);
     window->setKeyRepeatEnabled(false);
 
-    axis.rescale(window->getSize());
+    scale.rescale(window->getSize());
     rescaleTilesPosition();
 
     Cursor::reinitialize(window);
     Tile::setWindow(window);
     grid->rescale(window->getSize());
+    rearrangeTiles();
 }
 
 void Game::rescaleTilesPosition() {
@@ -79,6 +80,7 @@ void Game::createTiles() {
     });
 
     questionMark->setGrid(grid);
+    questionMark->putOnGrid(sf::Vector2u(2, 1));
 }
 
 void Game::handleTileEvents(const std::vector<std::shared_ptr<Tile>> &tiles) {
@@ -144,8 +146,9 @@ void Game::handleSystemEvents() {
                 }
 
                 sf::Vector2u newSize(width, height);
-                axis.rescale(newSize);
+                scale.rescale(newSize);
                 grid->rescale(newSize);
+                rearrangeTiles();
                 window->setView(sf::View(sf::FloatRect(0, 0, width, height)));
             } break;
             case sf::Event::MouseButtonPressed: {
@@ -162,6 +165,14 @@ void Game::handleSystemEvents() {
 
     if (keyChanged) {
         handleKeyboardEvents();
+    }
+}
+
+void Game::rearrangeTiles() {
+    auto tiles = TileRegistry::getAll();
+    for (size_t i=0; i < tiles.size(); i++) {
+        auto tile = tiles[i];
+        tile->putOnGrid();
     }
 }
 
