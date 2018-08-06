@@ -27,8 +27,8 @@ public:
     sf::Vector2f getPosition();
 
     void setGrid(std::shared_ptr<Grid> grid);
-    void putOnGrid();
-    void putOnGrid(sf::Vector2u gridPosition);
+    void snapToGrid();
+    void snapToGrid(sf::Vector2u gridPosition);
 
     sf::Vector2i getSize();
 

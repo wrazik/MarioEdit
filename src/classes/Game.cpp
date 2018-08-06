@@ -22,21 +22,11 @@ void Game::reinitializeWindow() {
     window->setKeyRepeatEnabled(false);
 
     scale.rescale(window->getSize());
-    rescaleTilesPosition();
 
     Cursor::reinitialize(window);
     Tile::setWindow(window);
     grid->rescale(window->getSize());
-    rearrangeTiles();
-}
-
-void Game::rescaleTilesPosition() {
-    auto tiles = TileRegistry::getAll();
-    for (int i=0; i<tiles.size(); i++) {
-        auto tile = tiles.at(i);
-        auto position = tile->getPosition()*Scale::getScaleRatio();
-        tile->setPosition(position);
-    }
+    snapTilesToGrid();
 }
 
 int Game::run() {
@@ -80,7 +70,7 @@ void Game::createTiles() {
     });
 
     questionMark->setGrid(grid);
-    questionMark->putOnGrid(sf::Vector2u(2, 1));
+    questionMark->snapToGrid(sf::Vector2u(2, 1));
 }
 
 void Game::handleTileEvents(const std::vector<std::shared_ptr<Tile>> &tiles) {
@@ -148,7 +138,7 @@ void Game::handleSystemEvents() {
                 sf::Vector2u newSize(width, height);
                 scale.rescale(newSize);
                 grid->rescale(newSize);
-                rearrangeTiles();
+                snapTilesToGrid();
                 window->setView(sf::View(sf::FloatRect(0, 0, width, height)));
             } break;
             case sf::Event::MouseButtonPressed: {
@@ -168,11 +158,11 @@ void Game::handleSystemEvents() {
     }
 }
 
-void Game::rearrangeTiles() {
+void Game::snapTilesToGrid() {
     auto tiles = TileRegistry::getAll();
     for (size_t i=0; i < tiles.size(); i++) {
         auto tile = tiles[i];
-        tile->putOnGrid();
+        tile->snapToGrid();
     }
 }
 
