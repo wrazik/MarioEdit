@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <functional>
+#include "classes/TileConfig.hpp"
 #include "classes/Grid.hpp"
 
 class Tile
@@ -21,7 +22,9 @@ public:
 
     static void setWindow(std::shared_ptr<sf::RenderWindow>& window);
 
-    Tile(sf::Sprite sprite);
+    Tile(sf::Sprite sprite, TileConfig config);
+
+    void change(std::size_t x, std::size_t y);
 
     void setPosition(sf::Vector2f position);
     sf::Vector2f getPosition();
@@ -37,6 +40,9 @@ public:
     void handleEvent(Tile::Event event);
     void setEventHandler(Tile::Event event, std::function<void(Tile* tile)> callback);
 
+    bool isMouseOver();
+    bool isDragging();
+
     void highlight();
     void undoHighlight();
     void startDrag();
@@ -47,6 +53,7 @@ private:
 
     static std::shared_ptr<sf::RenderWindow> window;
 
+    TileConfig config;
     sf::Vector2f dragOffset = {0.0f, 0.0f};
     sf::Vector2f position;
     
@@ -58,7 +65,8 @@ private:
 
     sf::Sprite sprite;
 
-    bool isMouseOver = false;
+    bool isMouseOverFlag = false;
+    bool isDraggingFlag = false;
     std::function<void(Tile* tile)> mouseOverCallback = nullptr;
     std::function<void(Tile* tile)> mouseEnterCallback = nullptr;
     std::function<void(Tile* tile)> mouseLeaveCallback = nullptr;

@@ -6,6 +6,7 @@
 #include "TileSet.hpp"
 #include "Scale.hpp"
 #include "TileRegistry.hpp"
+#include "Animation/SpecialBlockBlinkingAnimation.hpp"
 
 Game::Game() : tileSet("resources/tiles2.png") {
     window = std::make_shared<sf::RenderWindow>(
@@ -32,10 +33,13 @@ void Game::reinitializeWindow() {
 int Game::run() {
     createTiles();
 
+    auto tiles = TileRegistry::getAll();
+    
+    SpecialBlockBlinkingAnimation blinkAnimation(tiles);
+    blinkAnimation.run();
+
     while (window->isOpen()) {
         handleSystemEvents();
-
-        auto tiles = TileRegistry::getAll();
         handleTileEvents(tiles);
 
         window->clear(BG_LIGHT_COLOR);
@@ -60,6 +64,7 @@ void Game::createTiles() {
         tile->undoHighlight();
     });
     questionMark->setEventHandler(Tile::StartDrag, [](Tile* tile) {
+        tile->change(0, 5);
         tile->startDrag();
     });
     questionMark->setEventHandler(Tile::Drag, [](Tile* tile) {

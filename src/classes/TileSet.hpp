@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <SFML/Graphics.hpp>
+#include "TileConfig.hpp"
 #include "Tile.hpp"
 
 class TileSet
@@ -19,13 +20,8 @@ public:
 private:
 
     const size_t scale = 10;
-    const std::size_t tileWidth = 16;
-    const std::size_t tileHeight = 16;
+    TileConfig config;
     
     std::shared_ptr<sf::Texture> texture;
-    std::size_t separatorX = 0;
-    std::size_t separatorY = 0;
-    std::size_t offsetX = 0;
-    std::size_t offsetY = 0;
 
 };

@@ -1,4 +1,5 @@
 #include "Cursor.hpp"
+
 #include "TileRegistry.hpp"
 
 std::shared_ptr<sf::RenderWindow> Cursor::window;

@@ -10,8 +10,19 @@ void Tile::setWindow(std::shared_ptr<sf::RenderWindow> &window) {
     Tile::window = window;
 }
 
-Tile::Tile(sf::Sprite sprite) {
+Tile::Tile(sf::Sprite sprite, TileConfig config) {
     this->sprite = sprite;
+    this->config = config;
+}
+
+void Tile::change(std::size_t x, std::size_t y) {
+    sf::IntRect textureRect;
+    textureRect.width = config.tileWidth;
+    textureRect.height = config.tileHeight;
+
+    textureRect.top = (y * (config.tileHeight+config.separatorY)) + config.offsetY;
+    textureRect.left = (x * (config.tileWidth+config.separatorX)) + config.offsetX;
+    sprite.setTextureRect(textureRect);
 }
 
 void Tile::setPosition(sf::Vector2f position) {
@@ -50,34 +61,37 @@ void Tile::draw(std::shared_ptr<sf::RenderWindow> window) {
 void Tile::handleEvent(Tile::Event event) {
     switch (event) {
         case Tile::Event::MouseOver: {
-            isMouseOver = true;
+            isMouseOverFlag = true;
             if (mouseOverCallback != nullptr) {
                 mouseOverCallback(this);
             }
         } break;
         case Tile::Event::MouseEnter: {
-            isMouseOver = true;
+            isMouseOverFlag = true;
             if (mouseEnterCallback != nullptr) {
                 mouseEnterCallback(this);
             }
         } break;
         case Tile::Event::MouseLeave: {
-            isMouseOver = false;
+            isMouseOverFlag = false;
             if (mouseLeaveCallback != nullptr) {
                 mouseLeaveCallback(this);
             }
         } break;
         case Tile::Event::StartDrag: {
+            isDraggingFlag = true;
             if (startDragCallback != nullptr) {
                 startDragCallback(this);
             }
         } break;
         case Tile::Event::Drag: {
+            isDraggingFlag = true;
             if (dragCallback != nullptr) {
                 dragCallback(this);
             }
         } break;
         case Tile::Event::Drop: {
+            isDraggingFlag = false;
             if (dropCallback != nullptr) {
                 dropCallback(this);
             }
@@ -106,6 +120,14 @@ void Tile::setEventHandler(Tile::Event event, std::function<void(Tile* tile)> ca
             dropCallback = callback;
         } break;
     }
+}
+
+bool Tile::isMouseOver() {
+    return isMouseOverFlag;
+}
+
+bool Tile::isDragging() {
+    return isDraggingFlag;
 }
 
 void Tile::highlight() {
@@ -305,7 +327,7 @@ void Tile::drop() {
     snapToGrid(grid->getHighlightPlace());
 
     sf::Vector2f positionOnGrid = grid->getHighlightPosition();
-    if (isMouseOver) {
+    if (isMouseOverFlag) {
         sf::Vector2f tileSize(getSize());
         positionOnGrid -= (tileSize-(tileSize/scalePromotion))/2.0f;
     }
@@ -313,7 +335,7 @@ void Tile::drop() {
     setPosition(positionOnGrid);
     grid->hightlightOff();
 
-    if (isMouseOver) {
+    if (isMouseOverFlag) {
         correctCorners();
     }
 }
