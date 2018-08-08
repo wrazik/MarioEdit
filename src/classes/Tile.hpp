@@ -24,7 +24,7 @@ public:
 
     Tile(sf::Sprite sprite, TileConfig config);
 
-    void change(std::size_t x, std::size_t y);
+    void change(sf::Uint32 x, sf::Uint32 y);
 
     void setPosition(sf::Vector2f position);
     sf::Vector2f getPosition();

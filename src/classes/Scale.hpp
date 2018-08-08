@@ -17,8 +17,8 @@ public:
 
 private:
 
-    const std::size_t blocksOnHeight = 12;
-    const std::size_t blockHeight = 16;
+    const sf::Uint32 blocksOnHeight = 12;
+    const sf::Uint32 blockHeight = 16;
     static float scale;
     static float scaleRatio;
 

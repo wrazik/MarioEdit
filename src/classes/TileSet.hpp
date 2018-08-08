@@ -13,9 +13,9 @@ public:
 
     TileSet(std::string filepath);
 
-    void setTileSeparators(std::size_t separatorX, std::size_t separatorY);
-    void setTileOffset(std::size_t offsetX, std::size_t offsetY);
-    std::shared_ptr<Tile> createTile(std::size_t x, std::size_t y);
+    void setTileSeparators(sf::Uint32 separatorX, sf::Uint32 separatorY);
+    void setTileOffset(sf::Uint32 offsetX, sf::Uint32 offsetY);
+    std::shared_ptr<Tile> createTile(sf::Uint32 x, sf::Uint32 y);
 
 private:
 

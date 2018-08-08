@@ -1,6 +1,6 @@
 #include "AnimationFrame.hpp"
 
-AnimationFrame::AnimationFrame(std::size_t leftBound, std::size_t rightBound, std::function<void()> callback) {
+AnimationFrame::AnimationFrame(sf::Uint32 leftBound, sf::Uint32 rightBound, std::function<void()> callback) {
     this->leftBound = leftBound;
     this->rightBound = rightBound;
     this->callback = callback;

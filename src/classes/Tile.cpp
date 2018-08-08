@@ -15,7 +15,7 @@ Tile::Tile(sf::Sprite sprite, TileConfig config) {
     this->config = config;
 }
 
-void Tile::change(std::size_t x, std::size_t y) {
+void Tile::change(sf::Uint32 x, sf::Uint32 y) {
     sf::IntRect textureRect;
     textureRect.width = config.tileWidth;
     textureRect.height = config.tileHeight;

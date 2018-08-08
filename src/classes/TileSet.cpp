@@ -8,19 +8,19 @@ TileSet::TileSet(std::string filepath)
     texture->loadFromFile(filepath);
 }
 
-void TileSet::setTileSeparators(std::size_t separatorX, std::size_t separatorY)
+void TileSet::setTileSeparators(sf::Uint32 separatorX, sf::Uint32 separatorY)
 {
     config.separatorX = separatorX;
     config.separatorY = separatorY;
 }
 
-void TileSet::setTileOffset(std::size_t offsetX, std::size_t offsetY)
+void TileSet::setTileOffset(sf::Uint32 offsetX, sf::Uint32 offsetY)
 {
     config.offsetX = offsetX;
     config.offsetY = offsetY;
 }
 
-std::shared_ptr<Tile> TileSet::createTile(std::size_t x, std::size_t y)
+std::shared_ptr<Tile> TileSet::createTile(sf::Uint32 x, sf::Uint32 y)
 {
     sf::Sprite sprite;
     sprite.setTexture(*(texture));

@@ -4,12 +4,12 @@ class TileConfig {
 
 public:
 
-    std::size_t tileWidth = 16;
-    std::size_t tileHeight = 16;
+    sf::Uint32 tileWidth = 16;
+    sf::Uint32 tileHeight = 16;
 
-    std::size_t separatorX = 0;
-    std::size_t separatorY = 0;
-    std::size_t offsetX = 0;
-    std::size_t offsetY = 0;
+    sf::Uint32 separatorX = 0;
+    sf::Uint32 separatorY = 0;
+    sf::Uint32 offsetX = 0;
+    sf::Uint32 offsetY = 0;
 
 };

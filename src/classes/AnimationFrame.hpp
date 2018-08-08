@@ -7,15 +7,15 @@ class AnimationFrame {
 
 public:
 
-    AnimationFrame(std::size_t leftBound, std::size_t rightBound, std::function<void()> callback);
+    AnimationFrame(sf::Uint32 leftBound, sf::Uint32 rightBound, std::function<void()> callback);
 
     bool entersNow(sf::Int32 animationPointInTime, sf::Int32 duration);
     void enter();
 
 private:
 
-    std::size_t leftBound = 0;
-    std::size_t rightBound = 100;
+    sf::Uint32 leftBound = 0;
+    sf::Uint32 rightBound = 100;
     std::function<void()> callback;
 
 };

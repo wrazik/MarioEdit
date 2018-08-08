@@ -29,7 +29,7 @@ void Grid::draw(std::shared_ptr<sf::RenderWindow> window) {
         drawHorizontalLine(i, window);
     }
 
-    std::size_t columnsCount = windowSize.x / distance;
+    sf::Uint32 columnsCount = windowSize.x / distance;
     for (int i=1; i<columnsCount+1; i++) {
         drawVerticalLine(i, window);
     }
@@ -39,8 +39,8 @@ void Grid::draw(std::shared_ptr<sf::RenderWindow> window) {
     }
 }
 
-void Grid::drawHorizontalLine(std::size_t number, std::shared_ptr<sf::RenderWindow> window) {
-    std::size_t posY = number*distance;
+void Grid::drawHorizontalLine(sf::Uint32 number, std::shared_ptr<sf::RenderWindow> window) {
+    sf::Uint32 posY = number*distance;
 
     sf::RectangleShape line;
     line.setPosition(sf::Vector2f(0, posY-size/2));
@@ -50,8 +50,8 @@ void Grid::drawHorizontalLine(std::size_t number, std::shared_ptr<sf::RenderWind
     window->draw(line);
 }
 
-void Grid::drawVerticalLine(std::size_t number, std::shared_ptr<sf::RenderWindow> window) {
-    std::size_t posX = number*distance;
+void Grid::drawVerticalLine(sf::Uint32 number, std::shared_ptr<sf::RenderWindow> window) {
+    sf::Uint32 posX = number*distance;
 
     sf::RectangleShape line;
     line.setPosition(sf::Vector2f(posX-size/2, 0));

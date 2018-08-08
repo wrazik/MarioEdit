@@ -19,11 +19,11 @@ public:
 private:
 
     const std::string title = "Mario::Edit";
-    std::size_t minWindowHeight = 640;
-    std::size_t width = 1280;
-    std::size_t height = 960;
-    std::size_t windowedWidth = 1280;
-    std::size_t windowedHeight = 960;
+    sf::Uint32 minWindowHeight = 640;
+    sf::Uint32 width = 1280;
+    sf::Uint32 height = 960;
+    sf::Uint32 windowedWidth = 1280;
+    sf::Uint32 windowedHeight = 960;
     bool isFullscreen = false;
 
     std::shared_ptr<sf::RenderWindow> window;

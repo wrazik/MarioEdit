@@ -22,15 +22,15 @@ public:
 private:
 
     sf::Vector2u windowSize;
-    std::size_t rows = 12;
+    sf::Uint32 rows = 12;
     float distance;
-    std::size_t size;
-    std::size_t sizeDivider = 400;
+    sf::Uint32 size;
+    sf::Uint32 sizeDivider = 400;
     sf::Color lineColor;
     bool hightlight = false;
     sf::Vector2f highlightPosition;
 
-    void drawHorizontalLine(std::size_t number, std::shared_ptr<sf::RenderWindow> window);
-    void drawVerticalLine(std::size_t number, std::shared_ptr<sf::RenderWindow> window);
+    void drawHorizontalLine(sf::Uint32 number, std::shared_ptr<sf::RenderWindow> window);
+    void drawVerticalLine(sf::Uint32 number, std::shared_ptr<sf::RenderWindow> window);
     void drawHightlight(std::shared_ptr<sf::RenderWindow> window);
 };
