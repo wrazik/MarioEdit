@@ -21,8 +21,9 @@ target_include_directories(classes PUBLIC vendor/sfml/include)
 
 # GAME
 set(SOURCES src/main.cpp)
+find_package(Threads REQUIRED)
 add_executable(game ${SOURCES})
-target_link_libraries(game classes)
+target_link_libraries(game classes ${CMAKE_THREAD_LIBS_INIT})
 target_include_directories(game PUBLIC src)
 target_include_directories(game PUBLIC ${CMAKE_SOURCE_DIR}/vendor/sfml/include)
 

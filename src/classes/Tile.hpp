@@ -22,7 +22,7 @@ public:
 
     static void setWindow(std::shared_ptr<sf::RenderWindow>& window);
 
-    Tile(sf::Sprite sprite, TileConfig config);
+    Tile(sf::Sprite sprite, TileConfig config = TileConfig());
 
     void change(sf::Uint32 x, sf::Uint32 y);
 
