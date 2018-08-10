@@ -3,9 +3,10 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include "Keyboard.hpp"
-#include "Axis.hpp"
+#include "Scale.hpp"
 #include "Cursor.hpp"
 #include "TileSet.hpp"
+#include "Grid.hpp"
 
 class Game {
 
@@ -18,23 +19,25 @@ public:
 private:
 
     const std::string title = "Mario::Edit";
-    std::size_t width = 1280;
-    std::size_t height = 960;
-    std::size_t windowedWidth = 1280;
-    std::size_t windowedHeight = 960;
+    sf::Uint32 minWindowHeight = 640;
+    sf::Uint32 width = 1280;
+    sf::Uint32 height = 960;
+    sf::Uint32 windowedWidth = 1280;
+    sf::Uint32 windowedHeight = 960;
     bool isFullscreen = false;
 
     std::shared_ptr<sf::RenderWindow> window;
 
-    Axis axis;
     Cursor cursor;
     Keyboard keyboard;
     TileSet tileSet;
+    std::shared_ptr<Grid> grid;
 
 
     void handleSystemEvents();
     void handleTileEvents(const std::vector<std::shared_ptr<Tile>> &tiles);
     void createTiles();
+    void snapTilesToGrid();
 
     void handleKeyboardEvents();
 

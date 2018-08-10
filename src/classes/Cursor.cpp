@@ -1,4 +1,5 @@
 #include "Cursor.hpp"
+
 #include "TileRegistry.hpp"
 
 std::shared_ptr<sf::RenderWindow> Cursor::window;
@@ -12,24 +13,24 @@ Cursor::Cursor() {
     this->texture = std::make_shared<sf::Texture>();
     this->texture->loadFromFile("resources/cursor.png");
 
-    this->sprite = std::make_shared<sf::Sprite>(*(this->texture));
+    sprite = std::make_shared<sf::Sprite>(*(texture));
 
     float scale = 0.15;
-    this->sprite->scale(scale, scale);
+    sprite->scale(scale, scale);
 }
 
 void Cursor::updatePosition() {
     auto mousePosition = Cursor::getCurrentPosition();
-    this->sprite->setPosition(mousePosition.x, mousePosition.y);
+    sprite->setPosition(mousePosition.x, mousePosition.y);
 }
 
-sf::Vector2i Cursor::getCurrentPosition() {
-    return sf::Mouse::getPosition(*(window));
+sf::Vector2f Cursor::getCurrentPosition() {
+    return sf::Vector2f(sf::Mouse::getPosition(*(window)));
 }
 
 void Cursor::draw() {
-    this->updatePosition();
-    Cursor::window->draw(*(this->sprite));
+    updatePosition();
+    Cursor::window->draw(*sprite);
 }
 
 bool Cursor::isOver(std::shared_ptr<Tile> tile) {
@@ -43,43 +44,43 @@ bool Cursor::isOver(std::shared_ptr<Tile> tile) {
 }
 
 void Cursor::registerOver(std::shared_ptr<Tile> tile) {
-    if (!this->isOverRegistered(tile)) {
-        this->registeredOverOnTiles.push_back(tile);
+    if (!isOverRegistered(tile)) {
+        registeredOverOnTiles.push_back(tile);
     }
 }
 
 void Cursor::unregisterOver(std::shared_ptr<Tile> tile) {
-    if (this->isOverRegistered(tile)) {
-        this->registeredOverOnTiles.erase(
-                std::remove(this->registeredOverOnTiles.begin(), this->registeredOverOnTiles.end(), tile), this->registeredOverOnTiles.end()
+    if (isOverRegistered(tile)) {
+        registeredOverOnTiles.erase(
+                std::remove(registeredOverOnTiles.begin(), registeredOverOnTiles.end(), tile), registeredOverOnTiles.end()
         );
     }
 }
 
 bool Cursor::isOverRegistered(std::shared_ptr<Tile> tile) {
-    if (this->registeredOverOnTiles.empty()) {
+    if (registeredOverOnTiles.empty()) {
         return false;
     }
 
-    return std::find(this->registeredOverOnTiles.begin(), this->registeredOverOnTiles.end(), tile) != this->registeredOverOnTiles.end();
+    return std::find(registeredOverOnTiles.begin(), registeredOverOnTiles.end(), tile) != registeredOverOnTiles.end();
 }
 
 void Cursor::registerDrag(std::shared_ptr<Tile> tile) {
-    if (!this->isDragRegistered(tile)) {
-        this->registeredDragOnTiles.push_back(tile);
+    if (!isDragRegistered(tile)) {
+        registeredDragOnTiles.push_back(tile);
     }
 }
 
 void Cursor::unregisterDrag(std::shared_ptr<Tile> tile) {
-    if (this->isDragRegistered(tile)) {
-        this->registeredDragOnTiles.erase(
-                std::remove(this->registeredDragOnTiles.begin(), this->registeredDragOnTiles.end(), tile), this->registeredDragOnTiles.end()
+    if (isDragRegistered(tile)) {
+        registeredDragOnTiles.erase(
+                std::remove(registeredDragOnTiles.begin(), registeredDragOnTiles.end(), tile), registeredDragOnTiles.end()
         );
     }
 }
 
 bool Cursor::isDragRegistered(std::shared_ptr<Tile> tile) {
-    if (this->registeredDragOnTiles.empty()) {
+    if (registeredDragOnTiles.empty()) {
         return false;
     }
 
@@ -87,15 +88,15 @@ bool Cursor::isDragRegistered(std::shared_ptr<Tile> tile) {
 }
 
 bool Cursor::isClick() {
-    return this->clickFlag;
+    return clickFlag;
 }
 
 void Cursor::click(bool click) {
-    this->clickFlag = click;
+    clickFlag = click;
 }
 
 void Cursor::handleRegisteredDrags() {
-    for (std::size_t i=0; i<this->registeredDragOnTiles.size(); i++) {
-        this->registeredDragOnTiles[i]->handleEvent(Tile::Event::Drag);
+    for (std::size_t i=0; i<registeredDragOnTiles.size(); i++) {
+        registeredDragOnTiles[i]->handleEvent(Tile::Event::Drag);
     }
 }

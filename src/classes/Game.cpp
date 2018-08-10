@@ -4,16 +4,17 @@
 #include "defines.hpp"
 #include "Cursor.hpp"
 #include "TileSet.hpp"
-#include "Axis.hpp"
+#include "Scale.hpp"
 #include "TileRegistry.hpp"
+#include "Animation/SpecialBlockBlinkingAnimation.hpp"
 
 Game::Game() : tileSet("resources/tiles2.png") {
     window = std::make_shared<sf::RenderWindow>(
         sf::VideoMode(windowedWidth, windowedHeight), title, sf::Style::Default
     );
 
+    grid = std::make_shared<Grid>(window->getSize());
     reinitializeWindow();
-    Tile::setWindow(window);
 }
 
 void Game::reinitializeWindow() {
@@ -21,21 +22,29 @@ void Game::reinitializeWindow() {
     window->setFramerateLimit(100);
     window->setKeyRepeatEnabled(false);
 
-    axis.rescale(window->getSize());
+    Scale::rescale(window->getSize());
+
     Cursor::reinitialize(window);
+    Tile::setWindow(window);
+    grid->rescale(window->getSize());
+    snapTilesToGrid();
 }
 
 int Game::run() {
     createTiles();
 
+    auto tiles = TileRegistry::getAll();
+    
+    SpecialBlockBlinkingAnimation blinkAnimation(tiles);
+    blinkAnimation.run();
+
     while (window->isOpen()) {
         handleSystemEvents();
-
-        auto tiles = TileRegistry::getAll();
         handleTileEvents(tiles);
 
         window->clear(BG_LIGHT_COLOR);
 
+        grid->draw(window);
         for (std::size_t i=0; i<tiles.size(); i++) {
             tiles[i]->draw(window);
         }
@@ -55,6 +64,7 @@ void Game::createTiles() {
         tile->undoHighlight();
     });
     questionMark->setEventHandler(Tile::StartDrag, [](Tile* tile) {
+        tile->change(0, 5);
         tile->startDrag();
     });
     questionMark->setEventHandler(Tile::Drag, [](Tile* tile) {
@@ -64,40 +74,41 @@ void Game::createTiles() {
         tile->drop();
     });
 
-    questionMark->setPosition(0, 0);
+    questionMark->setGrid(grid);
+    questionMark->snapToGrid(sf::Vector2u(2, 1));
 }
 
 void Game::handleTileEvents(const std::vector<std::shared_ptr<Tile>> &tiles) {
     for (size_t i=0; i < tiles.size(); i++) {
-            auto tile = tiles[i];
-            if (cursor.isOver(tile) && !cursor.isOverRegistered(tile)) {
-                cursor.registerOver(tile);
-                tile->handleEvent(Tile::MouseEnter);
-            } else if (cursor.isOver(tile)) {
-                tile->handleEvent(Tile::MouseOver);
+        auto tile = tiles[i];
+        if (cursor.isOver(tile) && !cursor.isOverRegistered(tile)) {
+            cursor.registerOver(tile);
+            tile->handleEvent(Tile::MouseEnter);
+        } else if (cursor.isOver(tile)) {
+            tile->handleEvent(Tile::MouseOver);
 
-                if (cursor.isClick() && !cursor.isDragRegistered(tile)) {
-                    cursor.registerDrag(tile);
-                    tile->handleEvent(Tile::StartDrag);
-                } else if (!cursor.isClick() && cursor.isDragRegistered(tile)) {
-                    cursor.unregisterDrag(tile);
-                    tile->handleEvent(Tile::Drop);
-                }
-            } else if (!cursor.isOver(tile) && cursor.isOverRegistered(tile)) {
-                if (cursor.isDragRegistered(tile)) {
-                    cursor.unregisterDrag(tile);
-                    tile->handleEvent(Tile::Drop);
-                }
-                cursor.unregisterOver(tile);
-                tile->handleEvent(Tile::MouseLeave);
-            } else {
-                if (cursor.isDragRegistered(tile)) {
-                    cursor.unregisterDrag(tile);
-                    tile->handleEvent(Tile::Drop);
-                }
+            if (cursor.isClick() && !cursor.isDragRegistered(tile)) {
+                cursor.registerDrag(tile);
+                tile->handleEvent(Tile::StartDrag);
+            } else if (!cursor.isClick() && cursor.isDragRegistered(tile)) {
+                cursor.unregisterDrag(tile);
+                tile->handleEvent(Tile::Drop);
             }
-            tile->rescale(Axis::getScale(), Axis::getScale());
+        } else if (!cursor.isOver(tile) && cursor.isOverRegistered(tile)) {
+            if (cursor.isDragRegistered(tile)) {
+                cursor.unregisterDrag(tile);
+                tile->handleEvent(Tile::Drop);
+            }
+            cursor.unregisterOver(tile);
+            tile->handleEvent(Tile::MouseLeave);
+        } else {
+            if (cursor.isDragRegistered(tile)) {
+                cursor.unregisterDrag(tile);
+                tile->handleEvent(Tile::Drop);
+            }
         }
+        tile->rescale(Scale::getScale());
+    }
 }
 
 void Game::handleSystemEvents() {
@@ -123,8 +134,16 @@ void Game::handleSystemEvents() {
                 windowedWidth = event.size.width;
                 windowedHeight = event.size.height;
 
+                if (event.size.height < minWindowHeight) {
+                    window->setSize(sf::Vector2u(event.size.width, minWindowHeight));
+                    height = minWindowHeight;
+                    windowedHeight = minWindowHeight;
+                }
+
                 sf::Vector2u newSize(width, height);
-                axis.rescale(newSize);
+                Scale::rescale(newSize);
+                grid->rescale(newSize);
+                snapTilesToGrid();
                 window->setView(sf::View(sf::FloatRect(0, 0, width, height)));
             } break;
             case sf::Event::MouseButtonPressed: {
@@ -141,6 +160,14 @@ void Game::handleSystemEvents() {
 
     if (keyChanged) {
         handleKeyboardEvents();
+    }
+}
+
+void Game::snapTilesToGrid() {
+    auto tiles = TileRegistry::getAll();
+    for (size_t i=0; i < tiles.size(); i++) {
+        auto tile = tiles[i];
+        tile->snapToGrid();
     }
 }
 

@@ -13,7 +13,7 @@ TEST(TileRegistryTest, test_getall_one_tile) {
     TileRegistry::clear();
 
     sf::Sprite sprite;
-    auto tile = std::make_shared<Tile>(sprite);
+    auto tile = std::make_shared<Tile>(sprite, TileConfig());
 
     TileRegistry::registerTile(tile);
     ASSERT_EQ(1, TileRegistry::getAll().size());
@@ -24,7 +24,7 @@ TEST(TileRegistryTest, test_getall_two_tiles) {
 
     for (int i=0; i<2; i++) {
         sf::Sprite sprite;
-        auto tile = std::make_shared<Tile>(sprite);
+        auto tile = std::make_shared<Tile>(sprite, TileConfig());
         TileRegistry::registerTile(tile);
     }
 
