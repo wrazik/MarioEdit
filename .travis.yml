@@ -1,10 +1,12 @@
 dist: trusty
 sudo: false
 language: cpp
-compiler: gcc
+compiler: 
+  - gcc
+  - clang
 
 before_script:
-  - sudo apt-get install -y libsndfile1-dev libxrandr-dev libudev-dev libopenal-dev build-essential
+  - sudo apt-get install -y libsndfile1-dev libxrandr-dev libudev-dev libopenal-dev build-essential 
 
 script:
   - ./console build
